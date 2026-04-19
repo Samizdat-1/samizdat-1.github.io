@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>رنگ — rang</title>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Nastaliq+Urdu:wght@400;700&family=Playfair+Display:ital,wght@0,400;1,300&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      min-height: 100vh;
+      background: #0e0500;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Playfair Display', serif;
+    }
+
+    .app {
+      width: 480px;
+      background: #1a0a00;
+      border-radius: 6px;
+      border: 0.5px solid rgba(255,180,50,0.2);
+      overflow: hidden;
+    }
+
+    .topstrip {
+      height: 5px;
+      width: 100%;
+      display: flex;
+    }
+
+    .topstrip-seg { flex: 1; }
+
+    .topbar {
+      padding: 20px 28px 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .app-title-ur {
+      font-family: 'Noto Nastaliq Urdu', serif;
+      font-size: 22px;
+      color: #f5c842;
+      letter-spacing: 0.02em;
+      line-height: 1.4;
+    }
+
+    .app-title-en {
+      font-size: 10px;
+      color: rgba(245,200,66,0.5);
+      letter-spacing: 0.22em;
+      margin-top: 2px;
+    }
+
+    .counter {
+      font-size: 11px;
+      color: rgba(245,200,66,0.45);
+      letter-spacing: 0.12em;
+    }
+
+    .stage {
+      padding: 24px 28px 0;
+      position: relative;
+    }
+
+    .mughal {
+      position: absolute;
+      top: 16px;
+      right: 20px;
+      width: 56px;
+      height: 56px;
+      opacity: 0.15;
+      pointer-events: none;
+    }
+
+    .slide {
+      width: 100%;
+      height: 340px;
+      border-radius: 4px;
+      display: flex;
+      align-items: flex-end;
+      padding: 24px;
+      transition: background 0.55s cubic-bezier(0.4,0,0.2,1);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .slide-label {
+      font-family: 'Playfair Display', serif;
+      font-style: italic;
+      font-size: 24px;
+      letter-spacing: 0.04em;
+      transition: color 0.4s;
+      line-height: 1.2;
+      position: relative;
+      z-index: 1;
+    }
+
+    .slide-ur {
+      font-family: 'Noto Nastaliq Urdu', serif;
+      font-size: 16px;
+      margin-top: 4px;
+      opacity: 0.85;
+      transition: color 0.4s;
+      display: block;
+      position: relative;
+      z-index: 1;
+    }
+
+    .slide-sublabel {
+      font-size: 10px;
+      letter-spacing: 0.2em;
+      margin-top: 6px;
+      opacity: 0.6;
+      font-style: normal;
+      font-family: 'Playfair Display', serif;
+      transition: color 0.4s;
+      position: relative;
+      z-index: 1;
+    }
+
+    .border-strip {
+      height: 1px;
+      margin: 0 28px;
+      background: rgba(245,200,66,0.12);
+    }
+
+    .controls {
+      padding: 18px 28px 22px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .nav-btn {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      border: 0.5px solid rgba(245,200,66,0.3);
+      background: transparent;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.15s;
+      flex-shrink: 0;
+    }
+
+    .nav-btn:hover { background: rgba(245,200,66,0.08); }
+
+    .nav-btn svg {
+      width: 14px;
+      height: 14px;
+      fill: none;
+      stroke: rgba(245,200,66,0.7);
+      stroke-width: 1.5;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .dots {
+      display: flex;
+      gap: 8px;
+      flex: 1;
+      justify-content: center;
+    }
+
+    .dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: rgba(245,200,66,0.25);
+      cursor: pointer;
+      transition: background 0.3s, transform 0.3s;
+      border: none;
+    }
+
+    .dot.active {
+      background: #f5c842;
+      transform: scale(1.4);
+    }
+
+    .footer {
+      padding: 10px 28px 18px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .footer-text {
+      font-size: 10px;
+      color: rgba(245,200,66,0.3);
+      letter-spacing: 0.14em;
+    }
+  </style>
+</head>
+<body>
+
+<div class="app">
+  <div class="topstrip">
+    <div class="topstrip-seg" style="background:#C8860A;"></div>
+    <div class="topstrip-seg" style="background:#8B1A4A;"></div>
+    <div class="topstrip-seg" style="background:#1E3F6E;"></div>
+    <div class="topstrip-seg" style="background:#2D5A28;"></div>
+    <div class="topstrip-seg" style="background:#7A1C1C;"></div>
+  </div>
+
+  <div class="topbar">
+    <div>
+      <div class="app-title-ur">رنگ</div>
+      <div class="app-title-en">rang — color</div>
+    </div>
+    <span class="counter" id="counter">01 / 05</span>
+  </div>
+
+  <div class="stage">
+    <svg class="mughal" id="mughal" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"></svg>
+    <div class="slide" id="slide">
+      <div>
+        <div class="slide-label" id="label"></div>
+        <span class="slide-ur" id="label-ur"></span>
+        <div class="slide-sublabel" id="sublabel"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="border-strip"></div>
+
+  <div class="controls">
+    <button class="nav-btn" id="prev" aria-label="Previous">
+      <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+    </button>
+    <div class="dots" id="dots"></div>
+    <button class="nav-btn" id="next" aria-label="Next">
+      <svg viewBox="0 0 24 24"><polyline points="9 6 15 12 9 18"/></svg>
+    </button>
+  </div>
+
+  <div class="footer">
+    <span class="footer-text">لاہور — lahore</span>
+    <span class="footer-text">traditional punjabi colors</span>
+  </div>
+</div>
+
+<script>
+  const slides = [
+    { bg:"#C8860A", label:"haldi",    ur:"ہلدی",    sublabel:"turmeric yellow — weddings & ritual",  text:"#fff8e0" },
+    { bg:"#8B1A4A", label:"phulkari", ur:"پھلکاری", sublabel:"embroidery rose — the art of flowers", text:"#ffdde8" },
+    { bg:"#1E3F6E", label:"barsat",   ur:"برسات",   sublabel:"monsoon blue — lahore rains",          text:"#d4e8ff" },
+    { bg:"#2D5A28", label:"mehndi",   ur:"مہندی",   sublabel:"henna green — celebration & blessing", text:"#d8f0d0" },
+    { bg:"#7A1C1C", label:"anar",     ur:"انار",    sublabel:"pomegranate red — bazaar & spice",     text:"#ffe0d0" }
+  ];
+
+  let current = 0;
+
+  const slideEl    = document.getElementById("slide");
+  const labelEl    = document.getElementById("label");
+  const labelUrEl  = document.getElementById("label-ur");
+  const sublabelEl = document.getElementById("sublabel");
+  const counterEl  = document.getElementById("counter");
+  const dotsEl     = document.getElementById("dots");
+  const mughalEl   = document.getElementById("mughal");
+
+  slides.forEach((_, i) => {
+    const d = document.createElement("button");
+    d.className = "dot" + (i === 0 ? " active" : "");
+    d.setAttribute("aria-label", "Go to slide " + (i + 1));
+    d.onclick = () => go(i);
+    dotsEl.appendChild(d);
+  });
+
+  function mughalSVG(color) {
+    return `
+      <circle cx="50" cy="50" r="44" stroke="${color}" stroke-width="1" fill="none"/>
+      <circle cx="50" cy="50" r="30" stroke="${color}" stroke-width="0.8" fill="none"/>
+      <circle cx="50" cy="50" r="16" stroke="${color}" stroke-width="0.8" fill="none"/>
+      <path d="M50 6 Q56 20 50 34 Q44 20 50 6Z" stroke="${color}" stroke-width="0.8" fill="${color}" opacity="0.5"/>
+      <path d="M50 94 Q56 80 50 66 Q44 80 50 94Z" stroke="${color}" stroke-width="0.8" fill="${color}" opacity="0.5"/>
+      <path d="M6 50 Q20 56 34 50 Q20 44 6 50Z" stroke="${color}" stroke-width="0.8" fill="${color}" opacity="0.5"/>
+      <path d="M94 50 Q80 56 66 50 Q80 44 94 50Z" stroke="${color}" stroke-width="0.8" fill="${color}" opacity="0.5"/>
+      <path d="M18 18 Q28 32 38 38 Q32 28 18 18Z" stroke="${color}" stroke-width="0.8" fill="${color}" opacity="0.4"/>
+      <path d="M82 18 Q72 32 62 38 Q68 28 82 18Z" stroke="${color}" stroke-width="0.8" fill="${color}" opacity="0.4"/>
+      <path d="M18 82 Q28 68 38 62 Q32 72 18 82Z" stroke="${color}" stroke-width="0.8" fill="${color}" opacity="0.4"/>
+      <path d="M82 82 Q72 68 62 62 Q68 72 82 82Z" stroke="${color}" stroke-width="0.8" fill="${color}" opacity="0.4"/>
+      <circle cx="50" cy="50" r="5" fill="${color}"/>
+      <circle cx="50" cy="6"  r="2.5" fill="${color}"/>
+      <circle cx="50" cy="94" r="2.5" fill="${color}"/>
+      <circle cx="6"  cy="50" r="2.5" fill="${color}"/>
+      <circle cx="94" cy="50" r="2.5" fill="${color}"/>
+    `;
+  }
+
+  function go(n) {
+    current = (n + slides.length) % slides.length;
+    const s = slides[current];
+
+    slideEl.style.background = s.bg;
+    labelEl.textContent      = s.label;
+    labelEl.style.color      = s.text;
+    labelUrEl.textContent    = s.ur;
+    labelUrEl.style.color    = s.text;
+    sublabelEl.textContent   = s.sublabel;
+    sublabelEl.style.color   = s.text;
+    counterEl.textContent    = String(current + 1).padStart(2, "0") + " / 05";
+    mughalEl.innerHTML       = mughalSVG(s.text);
+
+    document.querySelectorAll(".dot").forEach((d, i) => {
+      d.classList.toggle("active", i === current);
+    });
+  }
+
+  document.getElementById("prev").onclick = () => go(current - 1);
+  document.getElementById("next").onclick = () => go(current + 1);
+
+  document.addEventListener("keydown", e => {
+    if (e.key === "ArrowLeft")  go(current - 1);
+    if (e.key === "ArrowRight") go(current + 1);
+  });
+
+  go(0);
+</script>
+
+</body>
+</html>
