@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>SF Colors</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;1,300&family=DM+Sans:wght@300;400&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      min-height: 100vh;
+      background: #e2e6eb;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'DM Sans', sans-serif;
+    }
+
+    .app {
+      width: 480px;
+      background: #f0f2f5;
+      border-radius: 8px;
+      border: 0.5px solid rgba(0,0,0,0.08);
+      overflow: hidden;
+    }
+
+    .topbar {
+      padding: 20px 28px 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+    }
+
+    .app-title {
+      font-family: 'DM Mono', monospace;
+      font-size: 15px;
+      font-weight: 400;
+      color: #1a1f2e;
+      letter-spacing: 0.04em;
+    }
+
+    .app-sub {
+      font-size: 10px;
+      color: #8a9bb0;
+      letter-spacing: 0.18em;
+      margin-top: 3px;
+      font-family: 'DM Mono', monospace;
+    }
+
+    .counter {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      color: #8a9bb0;
+      letter-spacing: 0.1em;
+    }
+
+    .stage {
+      padding: 22px 28px 0;
+      position: relative;
+    }
+
+    .slide {
+      width: 100%;
+      height: 340px;
+      border-radius: 6px;
+      display: flex;
+      align-items: flex-end;
+      padding: 24px;
+      transition: background 0.6s cubic-bezier(0.4,0,0.2,1);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .slide-num {
+      font-family: 'DM Mono', monospace;
+      font-size: 72px;
+      font-weight: 300;
+      font-style: italic;
+      position: absolute;
+      top: 16px;
+      left: 22px;
+      opacity: 0.12;
+      line-height: 1;
+      transition: color 0.4s;
+    }
+
+    .slide-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 18px;
+      font-weight: 300;
+      letter-spacing: 0.06em;
+      transition: color 0.4s;
+      line-height: 1.2;
+      position: relative;
+      z-index: 1;
+    }
+
+    .slide-sublabel {
+      font-size: 10px;
+      letter-spacing: 0.2em;
+      margin-top: 6px;
+      opacity: 0.65;
+      font-family: 'DM Mono', monospace;
+      transition: color 0.4s;
+      position: relative;
+      z-index: 1;
+    }
+
+    .strip {
+      height: 2px;
+      width: 100%;
+      transition: background 0.6s cubic-bezier(0.4,0,0.2,1);
+      margin-top: 22px;
+    }
+
+    .controls {
+      padding: 16px 28px 22px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .nav-btn {
+      width: 38px;
+      height: 38px;
+      border-radius: 6px;
+      border: 1.5px solid #9aa5b4;
+      background: #dde2e8;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.15s, border-color 0.15s;
+      flex-shrink: 0;
+    }
+
+    .nav-btn:hover { background: #c8d0da; border-color: #7a8899; }
+    .nav-btn:active { background: #b8c2ce; }
+
+    .nav-btn svg {
+      width: 14px;
+      height: 14px;
+      fill: none;
+      stroke: #3a4a5c;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .dots {
+      display: flex;
+      gap: 6px;
+      flex: 1;
+      justify-content: center;
+    }
+
+    .dot {
+      width: 20px;
+      height: 3px;
+      border-radius: 2px;
+      background: rgba(0,0,0,0.12);
+      cursor: pointer;
+      transition: background 0.3s, transform 0.3s;
+      border: none;
+    }
+
+    .dot.active {
+      background: #1a1f2e;
+      transform: scaleX(1.4);
+    }
+
+    .footer {
+      padding: 8px 28px 16px;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .footer-text {
+      font-family: 'DM Mono', monospace;
+      font-size: 9px;
+      color: #b0bcc8;
+      letter-spacing: 0.16em;
+    }
+  </style>
+</head>
+<body>
+
+<div class="app">
+  <div class="topbar">
+    <div>
+      <div class="app-title">SF_COLORS.exe</div>
+      <div class="app-sub">37.7749° N, 122.4194° W</div>
+    </div>
+    <span class="counter" id="counter">01 / 05</span>
+  </div>
+
+  <div class="stage">
+    <div class="slide" id="slide">
+      <div class="slide-num" id="slidenum"></div>
+      <div style="position:relative;z-index:1;">
+        <div class="slide-label" id="label"></div>
+        <div class="slide-sublabel" id="sublabel"></div>
+      </div>
+    </div>
+    <div class="strip" id="strip"></div>
+  </div>
+
+  <div class="controls">
+    <button class="nav-btn" id="prev" aria-label="Previous">
+      <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+    </button>
+    <div class="dots" id="dots"></div>
+    <button class="nav-btn" id="next" aria-label="Next">
+      <svg viewBox="0 0 24 24"><polyline points="9 6 15 12 9 18"/></svg>
+    </button>
+  </div>
+
+  <div class="footer">
+    <span class="footer-text">san francisco, ca</span>
+    <span class="footer-text">the city by the bay</span>
+  </div>
+</div>
+
+<script>
+  const slides = [
+    { bg:"#C8CDD6", strip:"#8a9bb0", label:"karl the fog",   sublabel:"the marine layer that swallows twin peaks",  text:"#1a2535", num:"01" },
+    { bg:"#C0440A", strip:"#8B2E04", label:"golden gate",     sublabel:"international orange — painted since 1937",  text:"#fff0e8", num:"02" },
+    { bg:"#0D2137", strip:"#1a3a5c", label:"bay at midnight", sublabel:"the water seen from the embarcadero at 2am", text:"#7ec8f0", num:"03" },
+    { bg:"#E8A020", strip:"#B87818", label:"mission sun",     sublabel:"late afternoon on 24th street in october",   text:"#3d1f00", num:"04" },
+    { bg:"#4A3728", strip:"#2e1f14", label:"muir redwood",    sublabel:"the bark of a 1,000 year old coastal tree",  text:"#f5ede6", num:"05" }
+  ];
+
+  let current = 0;
+
+  const slideEl    = document.getElementById("slide");
+  const labelEl    = document.getElementById("label");
+  const sublabelEl = document.getElementById("sublabel");
+  const slidenumEl = document.getElementById("slidenum");
+  const counterEl  = document.getElementById("counter");
+  const dotsEl     = document.getElementById("dots");
+  const stripEl    = document.getElementById("strip");
+
+  slides.forEach((_, i) => {
+    const d = document.createElement("button");
+    d.className = "dot" + (i === 0 ? " active" : "");
+    d.setAttribute("aria-label", "Go to slide " + (i + 1));
+    d.onclick = () => go(i);
+    dotsEl.appendChild(d);
+  });
+
+  function go(n) {
+    current = (n + slides.length) % slides.length;
+    const s = slides[current];
+
+    slideEl.style.background = s.bg;
+    stripEl.style.background = s.strip;
+    labelEl.textContent      = s.label;
+    labelEl.style.color      = s.text;
+    sublabelEl.textContent   = s.sublabel;
+    sublabelEl.style.color   = s.text;
+    slidenumEl.textContent   = s.num;
+    slidenumEl.style.color   = s.text;
+    counterEl.textContent    = String(current + 1).padStart(2, "0") + " / 05";
+
+    document.querySelectorAll(".dot").forEach((d, i) => {
+      d.classList.toggle("active", i === current);
+    });
+  }
+
+  document.getElementById("prev").onclick = () => go(current - 1);
+  document.getElementById("next").onclick = () => go(current + 1);
+
+  document.addEventListener("keydown", e => {
+    if (e.key === "ArrowLeft")  go(current - 1);
+    if (e.key === "ArrowRight") go(current + 1);
+  });
+
+  go(0);
+</script>
+
+</body>
+</html>
