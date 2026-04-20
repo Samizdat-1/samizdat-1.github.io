@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -11,7 +12,6 @@
       --sakura: #d4a0a0;
       --fog:    #8a9bb0;
       --ink:    #0e0e0c;
-      --cream:  #f5f0e8;
       --paper:  #f0ebe3;
     }
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -22,15 +22,8 @@
     .r1{background:#C8CDD6;}.r2{background:#C8860A;}.r3{background:#C0440A;}
     .r4{background:#8B1A4A;}.r5{background:#2D5A28;}.r6{background:#0D2137;}
     .r7{background:#EDCFCF;}.r8{background:#B8C4D8;}.r9{background:#7A1C1C;}
-    .topnav {
-      max-width: 900px; margin: 0 auto; padding: 20px 60px;
-      display: flex; align-items: center; gap: 16px;
-    }
-    .back-link {
-      font-size: 10px; letter-spacing: 0.18em; color: var(--fog);
-      text-decoration: none; display: flex; align-items: center; gap: 8px;
-      transition: color 0.2s;
-    }
+    .topnav { max-width: 900px; margin: 0 auto; padding: 20px 60px; display: flex; align-items: center; gap: 16px; }
+    .back-link { font-size: 10px; letter-spacing: 0.18em; color: var(--fog); text-decoration: none; display: flex; align-items: center; gap: 8px; transition: color 0.2s; }
     .back-link:hover { color: var(--ink); }
     .nav-sep { color: rgba(0,0,0,0.12); font-size: 10px; }
     .nav-current { font-size: 10px; letter-spacing: 0.18em; color: var(--ink); }
@@ -59,8 +52,48 @@
     .project:nth-child(2){animation-delay:0.25s;}
     .project:nth-child(3){animation-delay:0.4s;}
     @keyframes fadeup { to { opacity: 1; transform: translateY(0); } }
-    .project-frame { border-radius: 6px; overflow: hidden; border: 0.5px solid rgba(0,0,0,0.1); background: #e8e4de; height: 320px; }
-    .project-frame iframe { width: 200%; height: 200%; border: none; transform: scale(0.5); transform-origin: top left; pointer-events: none; }
+
+    .project-frame-link {
+      display: block;
+      text-decoration: none;
+      border-radius: 6px;
+      overflow: hidden;
+      border: 0.5px solid rgba(0,0,0,0.1);
+      background: #e8e4de;
+      height: 320px;
+      position: relative;
+      transition: border-color 0.2s;
+    }
+    .project-frame-link:hover { border-color: rgba(0,0,0,0.25); }
+    .project-frame-link:hover .frame-overlay { opacity: 1; }
+
+    .project-frame-link iframe {
+      width: 200%; height: 200%; border: none;
+      transform: scale(0.5); transform-origin: top left;
+      pointer-events: none;
+    }
+
+    .frame-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(0,0,0,0.04);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+
+    .frame-overlay-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.2em;
+      color: var(--ink);
+      background: rgba(255,255,255,0.85);
+      padding: 8px 16px;
+      border-radius: 2px;
+    }
+
     .project-info { padding: 8px 0; }
     .project-tag { display: inline-flex; align-items: center; gap: 6px; font-size: 9px; letter-spacing: 0.22em; color: var(--fog); margin-bottom: 14px; text-transform: uppercase; }
     .project-tag-dot { width: 5px; height: 5px; border-radius: 50%; }
@@ -125,9 +158,10 @@
   <div class="projects">
 
     <div class="project">
-      <div class="project-frame">
+      <a class="project-frame-link" href="shiki-carousel.html">
         <iframe src="shiki-carousel.html" title="Shiki carousel" scrolling="no"></iframe>
-      </div>
+        <div class="frame-overlay"><span class="frame-overlay-label">open project →</span></div>
+      </a>
       <div class="project-info">
         <div class="project-tag">
           <div class="project-tag-dot" style="background:#d4a0a0;"></div>
@@ -145,9 +179,10 @@
     </div>
 
     <div class="project flip">
-      <div class="project-frame">
+      <a class="project-frame-link" href="rang-carousel.html">
         <iframe src="rang-carousel.html" title="Rang carousel" scrolling="no"></iframe>
-      </div>
+        <div class="frame-overlay"><span class="frame-overlay-label">open project →</span></div>
+      </a>
       <div class="project-info">
         <div class="project-tag">
           <div class="project-tag-dot" style="background:#c8860a;"></div>
@@ -165,9 +200,10 @@
     </div>
 
     <div class="project">
-      <div class="project-frame">
+      <a class="project-frame-link" href="sf-carousel.html">
         <iframe src="sf-carousel.html" title="SF carousel" scrolling="no"></iframe>
-      </div>
+        <div class="frame-overlay"><span class="frame-overlay-label">open project →</span></div>
+      </a>
       <div class="project-info">
         <div class="project-tag">
           <div class="project-tag-dot" style="background:#8a9bb0;"></div>
