@@ -12,10 +12,27 @@
       min-height: 100vh;
       background: #e2e6eb;
       display: flex;
+      flex-direction: column;
       align-items: center;
       justify-content: center;
       font-family: 'DM Sans', sans-serif;
     }
+
+    .back-bar {
+      width: 480px;
+      padding: 0 0 12px 0;
+    }
+
+    .back-bar a {
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.18em;
+      color: #8a9bb0;
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .back-bar a:hover { color: #3a4a5c; }
 
     .app {
       width: 480px;
@@ -185,8 +202,9 @@
   </style>
 </head>
 <body>
-  <div style="padding: 14px 24px; font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.18em;">
-  <a href="works.html" style="color: #888780; text-decoration: none;">← back</a>
+
+<div class="back-bar">
+  <a href="works.html">← back</a>
 </div>
 
 <div class="app">
@@ -255,7 +273,6 @@
   function go(n) {
     current = (n + slides.length) % slides.length;
     const s = slides[current];
-
     slideEl.style.background = s.bg;
     stripEl.style.background = s.strip;
     labelEl.textContent      = s.label;
@@ -265,7 +282,6 @@
     slidenumEl.textContent   = s.num;
     slidenumEl.style.color   = s.text;
     counterEl.textContent    = String(current + 1).padStart(2, "0") + " / 05";
-
     document.querySelectorAll(".dot").forEach((d, i) => {
       d.classList.toggle("active", i === current);
     });
@@ -273,7 +289,6 @@
 
   document.getElementById("prev").onclick = () => go(current - 1);
   document.getElementById("next").onclick = () => go(current + 1);
-
   document.addEventListener("keydown", e => {
     if (e.key === "ArrowLeft")  go(current - 1);
     if (e.key === "ArrowRight") go(current + 1);
