@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Samizdat-1</title>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@300;400&family=Noto+Nastaliq+Urdu:wght@400&family=DM+Mono:ital,wght@0,300;0,400;1,300&family=Playfair+Display:ital,wght@0,400;1,300;1,400&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --gold:   #c8860a;
+      --sakura: #d4a0a0;
+      --fog:    #8a9bb0;
+      --ink:    #0e0e0c;
+      --cream:  #f5f0e8;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { width: 100%; height: 100%; overflow: hidden; }
+    body {
+      background: var(--ink);
+      color: var(--cream);
+      font-family: 'DM Mono', monospace;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+    .bg-grid {
+      position: fixed; inset: 0;
+      background-image:
+        linear-gradient(rgba(245,240,232,0.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(245,240,232,0.025) 1px, transparent 1px);
+      background-size: 48px 48px;
+      pointer-events: none; z-index: 0;
+    }
+    .stripe-top { position: fixed; top: 0; left: 0; right: 0; height: 3px; display: flex; z-index: 10; }
+    .stripe-top span { flex: 1; }
+    .s1{background:#EDCFCF;}.s2{background:#C8860A;}.s3{background:#C0440A;}
+    .s4{background:#8B1A4A;}.s5{background:#2D5A28;}.s6{background:#0D2137;}
+    .s7{background:#C8CDD6;}.s8{background:#B8C4D8;}.s9{background:#7A1C1C;}
+    .float-scripts { position: fixed; inset: 0; pointer-events: none; z-index: 1; overflow: hidden; }
+    .fs-jp-1 {
+      position: absolute; font-family: 'Noto Serif JP', serif; font-weight: 300;
+      font-size: 220px; color: var(--sakura); top: -30px; right: 40px;
+      line-height: 1; opacity: 0; animation: bigfade 1.2s 0.3s forwards;
+    }
+    .fs-ur-1 {
+      position: absolute; font-family: 'Noto Nastaliq Urdu', serif;
+      font-size: 140px; color: var(--gold); bottom: 60px; left: 0;
+      line-height: 1.4; opacity: 0; animation: bigfade 1.2s 0.5s forwards;
+    }
+    .fs-mono-1 {
+      position: absolute; font-family: 'DM Mono', monospace; font-size: 10px;
+      color: var(--fog); letter-spacing: 0.22em; top: 50%; right: 52px;
+      transform: translateY(-50%) rotate(90deg); transform-origin: right center;
+      white-space: nowrap; opacity: 0; animation: justfade 1s 0.7s forwards;
+    }
+    .fs-jp-2 {
+      position: absolute; font-family: 'Noto Serif JP', serif; font-weight: 300;
+      font-size: 11px; color: rgba(245,240,232,0.12); letter-spacing: 0.35em;
+      bottom: 100px; right: 80px; opacity: 0; animation: slideup 1s 0.8s forwards;
+    }
+    @keyframes bigfade { from{opacity:0;} to{opacity:0.05;} }
+    @keyframes justfade { from{opacity:0;} to{opacity:0.5;} }
+    @keyframes slideup { from{opacity:0;transform:translateY(16px);} to{opacity:1;transform:translateY(0);} }
+    .v-rule {
+      position: fixed; left: 60px; top: 60px; bottom: 60px;
+      width: 0.5px; background: rgba(245,240,232,0.05); z-index: 2;
+    }
+    .main {
+      position: relative; z-index: 5; flex: 1;
+      display: flex; flex-direction: column; justify-content: center;
+      padding: 80px 80px 80px 96px; max-width: 860px;
+    }
+    .eyebrow {
+      font-size: 10px; letter-spacing: 0.28em; color: var(--fog);
+      margin-bottom: 28px; opacity: 0; animation: slideup 0.8s 0.35s forwards;
+      display: flex; align-items: center; gap: 14px;
+    }
+    .eyebrow-line { width: 28px; height: 0.5px; background: var(--fog); opacity: 0.4; }
+    .name {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(60px, 9vw, 100px);
+      font-weight: 400; line-height: 1.0; letter-spacing: -0.02em;
+      opacity: 0; animation: slideup 0.9s 0.5s forwards;
+    }
+    .name-main  { color: var(--cream); }
+    .name-accent { color: var(--gold); font-style: italic; }
+    .tagline {
+      margin-top: 30px; font-family: 'DM Mono', monospace; font-size: 11px;
+      letter-spacing: 0.16em; color: rgba(245,240,232,0.35); line-height: 2;
+      opacity: 0; animation: slideup 0.9s 0.65s forwards;
+    }
+    .tagline-scripts { display: flex; gap: 18px; align-items: center; margin-top: 8px; flex-wrap: wrap; }
+    .tl-jp  { font-family: 'Noto Serif JP', serif; font-weight: 300; font-size: 14px; color: var(--sakura); opacity: 0.8; }
+    .tl-sep { color: rgba(245,240,232,0.12); font-size: 10px; }
+    .tl-ur  { font-family: 'Noto Nastaliq Urdu', serif; font-size: 14px; color: var(--gold); opacity: 0.8; }
+    .tl-mono { font-size: 10px; color: var(--fog); letter-spacing: 0.2em; opacity: 0.7; }
+    .cta-row {
+      margin-top: 56px; display: flex; align-items: center; gap: 32px;
+      opacity: 0; animation: slideup 0.9s 0.8s forwards;
+    }
+    .cta-btn {
+      display: inline-flex; align-items: center; gap: 14px;
+      text-decoration: none; font-family: 'DM Mono', monospace;
+      font-size: 11px; letter-spacing: 0.2em; color: var(--ink);
+      background: var(--cream); padding: 15px 30px; border-radius: 2px;
+      transition: background 0.25s, color 0.25s, gap 0.25s;
+      position: relative; overflow: hidden;
+    }
+    .cta-btn::after {
+      content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 2px;
+      background: linear-gradient(90deg, #EDCFCF, #C8860A, #C0440A, #8B1A4A, #2D5A28, #0D2137, #C8CDD6);
+    }
+    .cta-btn:hover { background: var(--gold); gap: 22px; }
+    .cta-note { font-size: 10px; color: rgba(245,240,232,0.18); letter-spacing: 0.15em; }
+    .bottom-bar {
+      position: fixed; bottom: 0; left: 0; right: 0;
+      padding: 18px 60px; display: flex; justify-content: space-between;
+      align-items: center; z-index: 5;
+      border-top: 0.5px solid rgba(245,240,232,0.05);
+    }
+    .bottom-coords {
+      font-size: 9px; color: rgba(245,240,232,0.15);
+      letter-spacing: 0.18em; display: flex; gap: 24px;
+    }
+    .bottom-handle { font-size: 9px; color: rgba(245,240,232,0.15); letter-spacing: 0.18em; }
+  </style>
+</head>
+<body>
+
+<div class="stripe-top">
+  <span class="s1"></span><span class="s2"></span><span class="s3"></span>
+  <span class="s4"></span><span class="s5"></span><span class="s6"></span>
+  <span class="s7"></span><span class="s8"></span><span class="s9"></span>
+</div>
+
+<div class="bg-grid"></div>
+<div class="v-rule"></div>
+
+<div class="float-scripts">
+  <div class="fs-jp-1">色</div>
+  <div class="fs-ur-1">رنگ</div>
+  <div class="fs-mono-1">37.7749° N · 31.5497° N · 35.6762° N</div>
+  <div class="fs-jp-2">作品集 · مجموعہ · works</div>
+</div>
+
+<div class="main">
+  <div class="eyebrow">
+    <div class="eyebrow-line"></div>
+    color · culture · code
+  </div>
+  <h1 class="name">
+    <span class="name-main">Samiz</span><span class="name-accent">dat-1</span>
+  </h1>
+  <div class="tagline">
+    a collection of works across cultures and colors
+    <div class="tagline-scripts">
+      <span class="tl-jp">色と文化</span>
+      <span class="tl-sep">◈</span>
+      <span class="tl-ur">رنگ اور ثقافت</span>
+      <span class="tl-sep">◈</span>
+      <span class="tl-mono">SF · LAHORE · TOKYO</span>
+    </div>
+  </div>
+  <div class="cta-row">
+    <a class="cta-btn" href="works.html">view works →</a>
+    <span class="cta-note">03 projects · 2025</span>
+  </div>
+</div>
+
+<div class="bottom-bar">
+  <div class="bottom-coords">
+    <span>37.7749° N — san francisco</span>
+    <span>31.5497° N — lahore</span>
+    <span>35.6762° N — tokyo</span>
+  </div>
+  <div class="bottom-handle">samizdat-1.github.io</div>
+</div>
+
+</body>
+</html>
