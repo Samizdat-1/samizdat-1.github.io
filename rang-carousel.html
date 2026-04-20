@@ -250,6 +250,9 @@
 </div>
 
 <script>
+  if (window !== window.top) {
+  document.querySelector('.back-col').style.display = 'none';
+}
   const slides = [
     { bg:"#C8860A", label:"haldi",    ur:"ہلدی",    sublabel:"turmeric yellow — weddings & ritual",  text:"#fff8e0" },
     { bg:"#8B1A4A", label:"phulkari", ur:"پھلکاری", sublabel:"embroidery rose — the art of flowers", text:"#ffdde8" },
