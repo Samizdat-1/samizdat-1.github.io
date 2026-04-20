@@ -209,6 +209,9 @@
 </div>
 
 <script>
+  if (window !== window.top) {
+    document.querySelector('.back-col').style.display = 'none';
+  }
   const slides = [
     { bg: "#EDCFCF", strip: "#D4A0A0", label: "桜 — sakura", sublabel: "cherry blossom pink", textColor: "#712B13" },
     { bg: "#C8D8C0", strip: "#7A9E70", label: "抹茶 — matcha", sublabel: "tea ceremony green",  textColor: "#27500A" },
