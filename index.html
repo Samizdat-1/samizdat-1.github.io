@@ -1,10 +1,10 @@
-<!DOCTYPE html>
+
 <html lang="en">
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Samizdat-1</title>
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@300;400&family=Noto+Nastaliq+Urdu:wght@400&family=DM+Mono:ital,wght@0,300;0,400;1,300&family=Playfair+Display:ital,wght@0,400;1,300;1,400&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@300;400&family=Noto+Nastaliq+Urdu:wght@400&family=Noto+Naskh+Arabic:wght@400;700&family=DM+Mono:ital,wght@0,300;0,400;1,300&family=Playfair+Display:ital,wght@0,400;1,300;1,400&display=swap" rel="stylesheet"/>
   <style>
     :root {
       --gold:   #c8860a;
@@ -12,169 +12,392 @@
       --fog:    #8a9bb0;
       --ink:    #0e0e0c;
       --cream:  #f5f0e8;
+      --sand:   #c8a96e;
+      --dust:   #8b6914;
+      --ochre:  #d4863a;
     }
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     html, body { width: 100%; height: 100%; overflow: hidden; }
-    body {
-      background: var(--ink);
-      color: var(--cream);
-      font-family: 'DM Mono', monospace;
+    body { font-family: 'DM Mono', monospace; }
+
+    /* ── SLIDE WRAPPER ── */
+    .slider {
+      display: flex;
+      width: 300%;
+      height: 100%;
+      transition: transform 0.7s cubic-bezier(0.77,0,0.18,1);
+    }
+    .panel {
+      width: calc(100% / 3);
+      height: 100%;
+      flex-shrink: 0;
+      position: relative;
+      overflow: hidden;
       display: flex;
       flex-direction: column;
-      position: relative;
     }
-    .bg-grid {
-      position: fixed; inset: 0;
-      background-image:
-        linear-gradient(rgba(245,240,232,0.025) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(245,240,232,0.025) 1px, transparent 1px);
-      background-size: 48px 48px;
-      pointer-events: none; z-index: 0;
+
+    /* ══════════════════════════════
+       PANEL 1 — kaam trailer
+    ══════════════════════════════ */
+    .p2 { background: #1a0a00; color: var(--cream); }
+
+    .p2-bg {
+      position: absolute; inset: 0;
+      display: grid; grid-template-columns: repeat(5, 1fr);
+      opacity: 0.18; pointer-events: none;
     }
-    .stripe-top { position: fixed; top: 0; left: 0; right: 0; height: 3px; display: flex; z-index: 10; }
-    .stripe-top span { flex: 1; }
-    .s1{background:#EDCFCF;}.s2{background:#C8860A;}.s3{background:#C0440A;}
-    .s4{background:#8B1A4A;}.s5{background:#2D5A28;}.s6{background:#0D2137;}
-    .s7{background:#C8CDD6;}.s8{background:#B8C4D8;}.s9{background:#7A1C1C;}
-    .float-scripts { position: fixed; inset: 0; pointer-events: none; z-index: 1; overflow: hidden; }
-    .fs-jp-1 {
-      position: absolute; font-family: 'Noto Serif JP', serif; font-weight: 300;
-      font-size: 220px; color: var(--sakura); top: -30px; right: 40px;
-      line-height: 1; opacity: 0; animation: bigfade 1.2s 0.3s forwards;
+    .p2-bg-seg { height: 100%; }
+
+    .p2 .stripe {
+      position: absolute; top: 0; left: 0; right: 0; height: 5px; display: flex; z-index: 10;
     }
-    .fs-ur-1 {
+    .p2 .stripe span { flex: 1; }
+
+    .p2 .float-ar {
       position: absolute; font-family: 'Noto Nastaliq Urdu', serif;
-      font-size: 140px; color: var(--gold); bottom: 60px; left: 0;
-      line-height: 1.4; opacity: 0; animation: bigfade 1.2s 0.5s forwards;
+      font-size: 200px; color: var(--gold); top: -20px; right: 20px;
+      line-height: 1.3; opacity: 0.05; pointer-events: none;
     }
-    .fs-mono-1 {
-      position: absolute; font-family: 'DM Mono', monospace; font-size: 10px;
-      color: var(--fog); letter-spacing: 0.22em; top: 50%; right: 52px;
-      transform: translateY(-50%) rotate(90deg); transform-origin: right center;
-      white-space: nowrap; opacity: 0; animation: justfade 1s 0.7s forwards;
-    }
-    .fs-jp-2 {
-      position: absolute; font-family: 'Noto Serif JP', serif; font-weight: 300;
-      font-size: 11px; color: rgba(245,240,232,0.12); letter-spacing: 0.35em;
-      bottom: 100px; right: 80px; opacity: 0; animation: slideup 1s 0.8s forwards;
-    }
-    @keyframes bigfade { from{opacity:0;} to{opacity:0.05;} }
-    @keyframes justfade { from{opacity:0;} to{opacity:0.5;} }
-    @keyframes slideup { from{opacity:0;transform:translateY(16px);} to{opacity:1;transform:translateY(0);} }
-    .v-rule {
-      position: fixed; left: 60px; top: 60px; bottom: 60px;
-      width: 0.5px; background: rgba(245,240,232,0.05); z-index: 2;
-    }
-    .main {
+
+    .p2 .main {
       position: relative; z-index: 5; flex: 1;
       display: flex; flex-direction: column; justify-content: center;
       padding: 80px 80px 80px 96px; max-width: 860px;
     }
-    .eyebrow {
-      font-size: 10px; letter-spacing: 0.28em; color: var(--fog);
-      margin-bottom: 28px; opacity: 0; animation: slideup 0.8s 0.35s forwards;
-      display: flex; align-items: center; gap: 14px;
+
+    .p2 .eyebrow {
+      font-size: 10px; letter-spacing: 0.28em; color: rgba(245,200,66,0.5);
+      margin-bottom: 28px; display: flex; align-items: center; gap: 14px;
     }
-    .eyebrow-line { width: 28px; height: 0.5px; background: var(--fog); opacity: 0.4; }
-    .name {
-      font-family: 'Playfair Display', serif;
-      font-size: clamp(60px, 9vw, 100px);
-      font-weight: 400; line-height: 1.0; letter-spacing: -0.02em;
-      opacity: 0; animation: slideup 0.9s 0.5s forwards;
+    .eyebrow-line-gold { width: 28px; height: 0.5px; background: var(--gold); opacity: 0.4; }
+
+    .p2 .name {
+      font-family: 'Noto Nastaliq Urdu', serif;
+      font-size: clamp(48px, 7vw, 80px);
+      color: #f5c842; line-height: 1.3; letter-spacing: 0.02em;
     }
-    .name-main  { color: var(--cream); }
-    .name-accent { color: var(--gold); font-style: italic; }
-    .tagline {
-      margin-top: 30px; font-family: 'DM Mono', monospace; font-size: 11px;
-      letter-spacing: 0.16em; color: rgba(245,240,232,0.35); line-height: 2;
-      opacity: 0; animation: slideup 0.9s 0.65s forwards;
+
+    .p2 .name-en {
+      font-family: 'Playfair Display', serif; font-style: italic;
+      font-size: clamp(28px, 4vw, 48px); color: rgba(245,240,232,0.5);
+      margin-top: 4px; display: block; letter-spacing: 0.04em;
     }
-    .tagline-scripts { display: flex; gap: 18px; align-items: center; margin-top: 8px; flex-wrap: wrap; }
-    .tl-jp  { font-family: 'Noto Serif JP', serif; font-weight: 300; font-size: 14px; color: var(--sakura); opacity: 0.8; }
-    .tl-sep { color: rgba(245,240,232,0.12); font-size: 10px; }
-    .tl-ur  { font-family: 'Noto Nastaliq Urdu', serif; font-size: 14px; color: var(--gold); opacity: 0.8; }
-    .tl-mono { font-size: 10px; color: var(--fog); letter-spacing: 0.2em; opacity: 0.7; }
-    .cta-row {
-      margin-top: 56px; display: flex; align-items: center; gap: 32px;
-      opacity: 0; animation: slideup 0.9s 0.8s forwards;
+
+    .p2 .tagline {
+      margin-top: 24px; font-size: 11px;
+      letter-spacing: 0.16em; color: rgba(245,200,66,0.35); line-height: 2;
     }
-    .cta-btn {
+
+    .p2 .cta-row { margin-top: 52px; display: flex; align-items: center; gap: 32px; }
+    .cta-btn-gold {
       display: inline-flex; align-items: center; gap: 14px;
-      text-decoration: none; font-family: 'DM Mono', monospace;
-      font-size: 11px; letter-spacing: 0.2em; color: var(--ink);
-      background: var(--cream); padding: 15px 30px; border-radius: 2px;
-      transition: background 0.25s, color 0.25s, gap 0.25s;
-      position: relative; overflow: hidden;
+      text-decoration: none; font-size: 11px; letter-spacing: 0.2em;
+      color: #1a0a00; background: #f5c842;
+      padding: 15px 30px; border-radius: 2px;
+      transition: background 0.25s, gap 0.25s;
     }
-    .cta-btn::after {
-      content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 2px;
-      background: linear-gradient(90deg, #EDCFCF, #C8860A, #C0440A, #8B1A4A, #2D5A28, #0D2137, #C8CDD6);
-    }
-    .cta-btn:hover { background: var(--gold); gap: 22px; }
-    .cta-note { font-size: 10px; color: rgba(245,240,232,0.18); letter-spacing: 0.15em; }
-    .bottom-bar {
-      position: fixed; bottom: 0; left: 0; right: 0;
+    .cta-btn-gold:hover { background: var(--gold); gap: 22px; }
+    .cta-note-gold { font-size: 10px; color: rgba(245,200,66,0.25); letter-spacing: 0.15em; }
+
+    .p2 .bottom-bar {
+      position: absolute; bottom: 0; left: 0; right: 0;
       padding: 18px 60px; display: flex; justify-content: space-between;
-      align-items: center; z-index: 5;
-      border-top: 0.5px solid rgba(245,240,232,0.05);
+      align-items: center; border-top: 0.5px solid rgba(245,200,66,0.08); z-index: 5;
     }
-    .bottom-coords {
-      font-size: 9px; color: rgba(245,240,232,0.15);
-      letter-spacing: 0.18em; display: flex; gap: 24px;
+    .p2 .bottom-text { font-size: 9px; color: rgba(245,200,66,0.2); letter-spacing: 0.18em; }
+
+    /* ══════════════════════════════
+       PANEL 3 — orientalism trailer
+    ══════════════════════════════ */
+    .p3 { background: #2a1f0e; color: #f0e6cc; }
+
+    .p3-bg {
+      position: absolute; inset: 0;
+      display: grid; grid-template-columns: repeat(4, 1fr);
+      opacity: 0.22; pointer-events: none;
     }
-    .bottom-handle { font-size: 9px; color: rgba(245,240,232,0.15); letter-spacing: 0.18em; }
+
+    .p3 .stripe {
+      position: absolute; top: 0; left: 0; right: 0; height: 4px; display: flex; z-index: 10;
+    }
+    .p3 .stripe span { flex: 1; }
+
+    .p3 .float-ar {
+      position: absolute; font-family: 'Noto Naskh Arabic', serif;
+      font-size: 160px; color: #c8a96e; bottom: 40px; right: 20px;
+      line-height: 1.2; opacity: 0.06; pointer-events: none;
+    }
+
+    .p3 .arch {
+      position: absolute; top: 0; right: 80px; width: 180px; height: 280px;
+      border: 0.5px solid rgba(200,169,110,0.15);
+      border-radius: 50% 50% 0 0 / 60% 60% 0 0;
+      pointer-events: none;
+    }
+    .p3 .arch2 {
+      position: absolute; top: 0; right: 130px; width: 120px; height: 200px;
+      border: 0.5px solid rgba(200,169,110,0.08);
+      border-radius: 50% 50% 0 0 / 60% 60% 0 0;
+      pointer-events: none;
+    }
+
+    .p3 .main {
+      position: relative; z-index: 5; flex: 1;
+      display: flex; flex-direction: column; justify-content: center;
+      padding: 80px 80px 80px 96px; max-width: 860px;
+    }
+
+    .p3 .eyebrow {
+      font-size: 10px; letter-spacing: 0.28em; color: rgba(200,169,110,0.6);
+      margin-bottom: 28px; display: flex; align-items: center; gap: 14px;
+    }
+    .eyebrow-line-sand { width: 28px; height: 0.5px; background: var(--sand); opacity: 0.4; }
+
+    .p3 .name {
+      font-family: 'Playfair Display', serif; font-style: italic;
+      font-size: clamp(44px, 6.5vw, 84px);
+      color: #e8d5a0; line-height: 1.1; letter-spacing: -0.01em;
+    }
+
+    .p3 .name-ar {
+      font-family: 'Noto Naskh Arabic', serif;
+      font-size: clamp(20px, 3vw, 36px); color: rgba(200,169,110,0.5);
+      margin-top: 8px; display: block; letter-spacing: 0.04em;
+    }
+
+    .p3 .tagline {
+      margin-top: 24px; font-size: 11px;
+      letter-spacing: 0.16em; color: rgba(200,169,110,0.4); line-height: 2;
+    }
+
+    .p3 .cta-row { margin-top: 52px; display: flex; align-items: center; gap: 32px; }
+    .cta-btn-sand {
+      display: inline-flex; align-items: center; gap: 14px;
+      text-decoration: none; font-size: 11px; letter-spacing: 0.2em;
+      color: #2a1f0e; background: #c8a96e;
+      padding: 15px 30px; border-radius: 2px;
+      transition: background 0.25s, gap 0.25s; position: relative; overflow: hidden;
+    }
+    .cta-btn-sand::after {
+      content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 2px;
+      background: linear-gradient(90deg, #D4863A, #C8A96E, #8B6914, #D4863A);
+    }
+    .cta-btn-sand:hover { background: var(--ochre); gap: 22px; }
+    .cta-note-sand { font-size: 10px; color: rgba(200,169,110,0.25); letter-spacing: 0.15em; }
+
+    .p3 .bottom-bar {
+      position: absolute; bottom: 0; left: 0; right: 0;
+      padding: 18px 60px; display: flex; justify-content: space-between;
+      align-items: center; border-top: 0.5px solid rgba(200,169,110,0.08); z-index: 5;
+    }
+    .p3 .bottom-text { font-size: 9px; color: rgba(200,169,110,0.2); letter-spacing: 0.18em; }
+
+    /* ══════════════════════════════
+       SHARED NAV ARROWS
+    ══════════════════════════════ */
+    .nav-arrows {
+      position: fixed; left: 0; right: 0; bottom: 56px;
+      display: flex; justify-content: space-between;
+      padding: 0 28px; z-index: 100; pointer-events: none;
+    }
+
+    .arrow-btn {
+      width: 40px; height: 40px; border-radius: 50%;
+      border: 1.5px solid; background: transparent;
+      cursor: pointer; display: flex; align-items: center; justify-content: center;
+      transition: background 0.2s, border-color 0.2s, opacity 0.2s;
+      pointer-events: all;
+    }
+    .arrow-btn.hidden { opacity: 0; pointer-events: none; }
+    .arrow-btn svg { width: 14px; height: 14px; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+    /* panel-specific arrow colors */
+    .arrows-p1 .arrow-btn { border-color: rgba(245,240,232,0.3); }
+    .arrows-p1 .arrow-btn svg { stroke: rgba(245,240,232,0.7); }
+    .arrows-p1 .arrow-btn:hover { background: rgba(245,240,232,0.08); border-color: rgba(245,240,232,0.6); }
+
+    .arrows-p2 .arrow-btn { border-color: rgba(245,200,66,0.35); }
+    .arrows-p2 .arrow-btn svg { stroke: rgba(245,200,66,0.8); }
+    .arrows-p2 .arrow-btn:hover { background: rgba(245,200,66,0.08); border-color: rgba(245,200,66,0.6); }
+
+    .arrows-p3 .arrow-btn { border-color: rgba(200,169,110,0.35); }
+    .arrows-p3 .arrow-btn svg { stroke: rgba(200,169,110,0.8); }
+    .arrows-p3 .arrow-btn:hover { background: rgba(200,169,110,0.08); border-color: rgba(200,169,110,0.6); }
+
+    /* dot indicators */
+    .dots-nav {
+      position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+      display: flex; gap: 8px; z-index: 100;
+    }
+    .dot-nav {
+      width: 5px; height: 5px; border-radius: 50%;
+      transition: background 0.3s, transform 0.3s;
+    }
+
+    /* ── animations ── */
+    @keyframes bigfade { from{opacity:0;} to{opacity:0.05;} }
+    @keyframes justfade { from{opacity:0;} to{opacity:0.5;} }
+    @keyframes slideup { from{opacity:0;transform:translateY(16px);} to{opacity:1;transform:translateY(0);} }
   </style>
 </head>
 <body>
 
-<div class="stripe-top">
-  <span class="s1"></span><span class="s2"></span><span class="s3"></span>
-  <span class="s4"></span><span class="s5"></span><span class="s6"></span>
-  <span class="s7"></span><span class="s8"></span><span class="s9"></span>
-</div>
+<!-- SLIDER -->
+<div class="slider" id="slider">
 
-<div class="bg-grid"></div>
-<div class="v-rule"></div>
-
-<div class="float-scripts">
-  <div class="fs-jp-1">色</div>
-  <div class="fs-ur-1">رنگ</div>
-  <div class="fs-mono-1">37.7749° N · 31.5497° N · 35.6762° N</div>
-  <div class="fs-jp-2">作品集 · مجموعہ · works</div>
-</div>
-
-<div class="main">
-  <div class="eyebrow">
-    <div class="eyebrow-line"></div>
-    color · culture · code
-  </div>
-  <h1 class="name">
-    <span class="name-main">Samiz</span><span class="name-accent">dat-1</span>
-  </h1>
-  <div class="tagline">
-    a collection of works across cultures and colors
-    <div class="tagline-scripts">
-      <span class="tl-jp">色と文化</span>
-      <span class="tl-sep">◈</span>
-      <span class="tl-ur">رنگ اور ثقافت</span>
-      <span class="tl-sep">◈</span>
-      <span class="tl-mono">SF · LAHORE · TOKYO</span>
+  <!-- ── PANEL 1: kaam trailer ── -->
+  <div class="panel p2">
+    <div class="p2-bg">
+      <div class="p2-bg-seg" style="background:#EDCFCF;"></div>
+      <div class="p2-bg-seg" style="background:#C8860A;"></div>
+      <div class="p2-bg-seg" style="background:#8B1A4A;"></div>
+      <div class="p2-bg-seg" style="background:#2D5A28;"></div>
+      <div class="p2-bg-seg" style="background:#0D2137;"></div>
+    </div>
+    <div class="stripe">
+      <span style="background:#C8860A;"></span>
+      <span style="background:#8B1A4A;"></span>
+      <span style="background:#2D5A28;"></span>
+      <span style="background:#0D2137;"></span>
+      <span style="background:#EDCFCF;"></span>
+    </div>
+    <div class="float-ar">کام</div>
+    <div class="main">
+      <div class="eyebrow"><div class="eyebrow-line-gold"></div>color studies · 2025</div>
+      <h1 class="name">کام<span class="name-en">— kaam</span></h1>
+      <div class="tagline">
+        five colors · three cultures · one archive<br>
+        japanese · punjabi · san francisco
+      </div>
+      <div class="cta-row">
+        <a class="cta-btn-gold" href="https://samizdat-1.github.io/kaam/works.html">explore the collection →</a>
+        <span class="cta-note-gold">03 color studies</span>
+      </div>
+    </div>
+    <div class="bottom-bar">
+      <span class="bottom-text">لاہور · 東京 · san francisco</span>
+      <span class="bottom-text">color · culture · code</span>
     </div>
   </div>
-  <div class="cta-row">
-    <a class="cta-btn" href="works.html">view works →</a>
-    <span class="cta-note">03 projects · 2025</span>
+
+  <!-- ── PANEL 2: orientalism trailer ── -->
+  <div class="panel p3">
+    <div class="p3-bg">
+      <div style="background:#C8A96E;"></div>
+      <div style="background:#8B5E14;"></div>
+      <div style="background:#D4863A;"></div>
+      <div style="background:#5C3A1A;"></div>
+    </div>
+    <div class="stripe">
+      <span style="background:#D4863A;"></span>
+      <span style="background:#C8A96E;"></span>
+      <span style="background:#8B6914;"></span>
+      <span style="background:#5C3A1A;"></span>
+      <span style="background:#D4863A;"></span>
+    </div>
+    <div class="arch"></div>
+    <div class="arch2"></div>
+    <div class="float-ar">الاستشراق</div>
+    <div class="main">
+      <div class="eyebrow"><div class="eyebrow-line-sand"></div>virtual exhibit · art history</div>
+      <h1 class="name">Orientalism<span class="name-ar">الاستشراق — al-istishrāq</span></h1>
+      <div class="tagline">
+        a critical exhibition on the western gaze<br>
+        gérôme · said · the snake charmer · 1879
+      </div>
+      <div class="cta-row">
+        <a class="cta-btn-sand" href="https://samizdat-1.github.io/orientalism-exhibit.html">enter the exhibit →</a>
+        <span class="cta-note-sand">virtual exhibit · 2025</span>
+      </div>
+    </div>
+    <div class="bottom-bar">
+      <span class="bottom-text">الاستشراق — orientalism</span>
+      <span class="bottom-text">samizdat-1.github.io</span>
+    </div>
   </div>
+
 </div>
 
-<div class="bottom-bar">
-  <div class="bottom-coords">
-    <span>37.7749° N — san francisco</span>
-    <span>31.5497° N — lahore</span>
-    <span>35.6762° N — tokyo</span>
-  </div>
-  <div class="bottom-handle">samizdat-1.github.io</div>
+<!-- NAV ARROWS -->
+<div class="nav-arrows arrows-p1" id="navArrows">
+  <button class="arrow-btn hidden" id="btnPrev" aria-label="Previous">
+    <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+  </button>
+  <button class="arrow-btn" id="btnNext" aria-label="Next">
+    <svg viewBox="0 0 24 24"><polyline points="9 6 15 12 9 18"/></svg>
+  </button>
 </div>
 
+<!-- DOT INDICATORS -->
+<div class="dots-nav" id="dotsNav"></div>
+
+<script>
+  const slider   = document.getElementById('slider');
+  const navArrows= document.getElementById('navArrows');
+  const btnPrev  = document.getElementById('btnPrev');
+  const btnNext  = document.getElementById('btnNext');
+  const dotsNav  = document.getElementById('dotsNav');
+
+  const panels = 3;
+  let current  = 0;
+
+  const arrowClasses = ['arrows-p1','arrows-p2','arrows-p3'];
+  const dotColors    = [
+    'rgba(245,240,232,0.35)',
+    'rgba(245,200,66,0.35)',
+    'rgba(200,169,110,0.35)'
+  ];
+  const dotActiveColors = [
+    'rgba(245,240,232,0.9)',
+    '#f5c842',
+    '#c8a96e'
+  ];
+
+  for (let i = 0; i < panels; i++) {
+    const d = document.createElement('div');
+    d.className = 'dot-nav';
+    d.style.background = i === 0 ? dotActiveColors[0] : dotColors[0];
+    d.style.width = i === 0 ? '18px' : '5px';
+    d.style.height = '5px';
+    d.style.borderRadius = '3px';
+    d.style.cursor = 'pointer';
+    d.style.transition = 'all 0.3s';
+    d.onclick = () => go(i);
+    dotsNav.appendChild(d);
+  }
+
+  function go(n) {
+    current = Math.max(0, Math.min(panels - 1, n));
+    slider.style.transform = `translateX(-${current * (100/3)}%)`;
+
+    navArrows.className = `nav-arrows ${arrowClasses[current]}`;
+    btnPrev.classList.toggle('hidden', current === 0);
+    btnNext.classList.toggle('hidden', current === panels - 1);
+
+    const dotEls = dotsNav.querySelectorAll('.dot-nav');
+    dotEls.forEach((d, i) => {
+      d.style.background = i === current ? dotActiveColors[current] : dotColors[current];
+      d.style.width      = i === current ? '18px' : '5px';
+    });
+  }
+
+  btnPrev.onclick = () => go(current - 1);
+  btnNext.onclick = () => go(current + 1);
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight') go(current + 1);
+    if (e.key === 'ArrowLeft')  go(current - 1);
+  });
+
+  let touchStartX = 0;
+  document.addEventListener('touchstart', e => { touchStartX = e.touches[0].clientX; });
+  document.addEventListener('touchend', e => {
+    const diff = touchStartX - e.changedTouches[0].clientX;
+    if (Math.abs(diff) > 50) go(diff > 0 ? current + 1 : current - 1);
+  });
+
+  go(0);
+</script>
 </body>
 </html>
