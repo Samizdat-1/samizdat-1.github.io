@@ -12,27 +12,33 @@
       min-height: 100vh;
       background: #e2e6eb;
       display: flex;
-      flex-direction: column;
       align-items: center;
       justify-content: center;
       font-family: 'DM Sans', sans-serif;
     }
 
-    .back-bar {
-      width: 480px;
-      padding: 0 0 12px 0;
+    .outer {
+      display: flex;
+      align-items: center;
+      gap: 28px;
     }
 
-    .back-bar a {
+    .back-col {
+      display: flex;
+      align-items: center;
+    }
+
+    .back-col a {
       font-family: 'DM Mono', monospace;
       font-size: 10px;
       letter-spacing: 0.18em;
       color: #8a9bb0;
       text-decoration: none;
+      writing-mode: horizontal-tb;
       transition: color 0.2s;
     }
 
-    .back-bar a:hover { color: #3a4a5c; }
+    .back-col a:hover { color: #3a4a5c; }
 
     .app {
       width: 480px;
@@ -203,43 +209,45 @@
 </head>
 <body>
 
-<div class="back-bar">
-  <a href="works.html">← back</a>
-</div>
-
-<div class="app">
-  <div class="topbar">
-    <div>
-      <div class="app-title">SF_COLORS.exe</div>
-      <div class="app-sub">37.7749° N, 122.4194° W</div>
-    </div>
-    <span class="counter" id="counter">01 / 05</span>
+<div class="outer">
+  <div class="back-col">
+    <a href="works.html">← back</a>
   </div>
 
-  <div class="stage">
-    <div class="slide" id="slide">
-      <div class="slide-num" id="slidenum"></div>
-      <div style="position:relative;z-index:1;">
-        <div class="slide-label" id="label"></div>
-        <div class="slide-sublabel" id="sublabel"></div>
+  <div class="app">
+    <div class="topbar">
+      <div>
+        <div class="app-title">SF_COLORS.exe</div>
+        <div class="app-sub">37.7749° N, 122.4194° W</div>
       </div>
+      <span class="counter" id="counter">01 / 05</span>
     </div>
-    <div class="strip" id="strip"></div>
-  </div>
 
-  <div class="controls">
-    <button class="nav-btn" id="prev" aria-label="Previous">
-      <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
-    </button>
-    <div class="dots" id="dots"></div>
-    <button class="nav-btn" id="next" aria-label="Next">
-      <svg viewBox="0 0 24 24"><polyline points="9 6 15 12 9 18"/></svg>
-    </button>
-  </div>
+    <div class="stage">
+      <div class="slide" id="slide">
+        <div class="slide-num" id="slidenum"></div>
+        <div style="position:relative;z-index:1;">
+          <div class="slide-label" id="label"></div>
+          <div class="slide-sublabel" id="sublabel"></div>
+        </div>
+      </div>
+      <div class="strip" id="strip"></div>
+    </div>
 
-  <div class="footer">
-    <span class="footer-text">san francisco, ca</span>
-    <span class="footer-text">the city by the bay</span>
+    <div class="controls">
+      <button class="nav-btn" id="prev" aria-label="Previous">
+        <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+      </button>
+      <div class="dots" id="dots"></div>
+      <button class="nav-btn" id="next" aria-label="Next">
+        <svg viewBox="0 0 24 24"><polyline points="9 6 15 12 9 18"/></svg>
+      </button>
+    </div>
+
+    <div class="footer">
+      <span class="footer-text">san francisco, ca</span>
+      <span class="footer-text">the city by the bay</span>
+    </div>
   </div>
 </div>
 
