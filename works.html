@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Samizdat-1 — works</title>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@300;400&family=Noto+Nastaliq+Urdu:wght@400&family=DM+Mono:ital,wght@0,300;0,400;1,300&family=Playfair+Display:ital,wght@0,400;1,300&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --gold:   #c8860a;
+      --sakura: #d4a0a0;
+      --fog:    #8a9bb0;
+      --ink:    #0e0e0c;
+      --cream:  #f5f0e8;
+      --paper:  #f0ebe3;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body { background: var(--paper); color: var(--ink); font-family: 'DM Mono', monospace; overflow-x: hidden; }
+    .rule-top { height: 4px; width: 100%; display: flex; }
+    .rule-seg { flex: 1; }
+    .r1{background:#C8CDD6;}.r2{background:#C8860A;}.r3{background:#C0440A;}
+    .r4{background:#8B1A4A;}.r5{background:#2D5A28;}.r6{background:#0D2137;}
+    .r7{background:#EDCFCF;}.r8{background:#B8C4D8;}.r9{background:#7A1C1C;}
+    .topnav {
+      max-width: 900px; margin: 0 auto; padding: 20px 60px;
+      display: flex; align-items: center; gap: 16px;
+    }
+    .back-link {
+      font-size: 10px; letter-spacing: 0.18em; color: var(--fog);
+      text-decoration: none; display: flex; align-items: center; gap: 8px;
+      transition: color 0.2s;
+    }
+    .back-link:hover { color: var(--ink); }
+    .nav-sep { color: rgba(0,0,0,0.12); font-size: 10px; }
+    .nav-current { font-size: 10px; letter-spacing: 0.18em; color: var(--ink); }
+    .hero { padding: 40px 60px 60px; max-width: 900px; margin: 0 auto; }
+    .hero-scripts { display: flex; align-items: flex-end; gap: 20px; margin-bottom: 28px; flex-wrap: wrap; }
+    .script-jp { font-family: 'Noto Serif JP', serif; font-weight: 300; font-size: 44px; color: var(--ink); opacity: 0.1; line-height: 1; letter-spacing: 0.05em; }
+    .script-ur { font-family: 'Noto Nastaliq Urdu', serif; font-size: 28px; color: var(--gold); opacity: 0.25; line-height: 1.4; }
+    .script-mono { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--fog); letter-spacing: 0.2em; opacity: 0.6; padding-bottom: 6px; }
+    .hero-title { font-family: 'Playfair Display', serif; font-size: 48px; font-weight: 400; color: var(--ink); line-height: 1.1; letter-spacing: -0.01em; }
+    .hero-title em { font-style: italic; color: var(--gold); }
+    .hero-sub { margin-top: 14px; font-size: 11px; color: var(--fog); letter-spacing: 0.2em; line-height: 2; }
+    .hero-divider { margin: 44px 0 0; display: flex; align-items: center; gap: 16px; }
+    .divider-line { flex: 1; height: 0.5px; background: rgba(0,0,0,0.1); }
+    .divider-symbol { font-family: 'Noto Serif JP', serif; font-size: 13px; color: rgba(0,0,0,0.18); letter-spacing: 0.3em; }
+    .section { max-width: 900px; margin: 0 auto; padding: 60px 60px 80px; }
+    .section-header { display: flex; align-items: baseline; gap: 16px; margin-bottom: 40px; }
+    .section-num { font-size: 10px; color: var(--fog); letter-spacing: 0.2em; }
+    .section-title { font-family: 'Playfair Display', serif; font-size: 22px; font-weight: 400; font-style: italic; color: var(--ink); }
+    .section-rule { flex: 1; height: 0.5px; background: rgba(0,0,0,0.1); }
+    .projects { display: flex; flex-direction: column; gap: 56px; }
+    .project {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: start;
+      opacity: 0; transform: translateY(24px); animation: fadeup 0.7s forwards;
+    }
+    .project:nth-child(1){animation-delay:0.1s;}
+    .project:nth-child(2){animation-delay:0.25s;}
+    .project:nth-child(3){animation-delay:0.4s;}
+    @keyframes fadeup { to { opacity: 1; transform: translateY(0); } }
+    .project-frame { border-radius: 6px; overflow: hidden; border: 0.5px solid rgba(0,0,0,0.1); background: #e8e4de; height: 320px; }
+    .project-frame iframe { width: 200%; height: 200%; border: none; transform: scale(0.5); transform-origin: top left; pointer-events: none; }
+    .project-info { padding: 8px 0; }
+    .project-tag { display: inline-flex; align-items: center; gap: 6px; font-size: 9px; letter-spacing: 0.22em; color: var(--fog); margin-bottom: 14px; text-transform: uppercase; }
+    .project-tag-dot { width: 5px; height: 5px; border-radius: 50%; }
+    .project-title { font-family: 'Playfair Display', serif; font-size: 26px; font-weight: 400; color: var(--ink); line-height: 1.2; margin-bottom: 16px; }
+    .project-title .jp { font-family: 'Noto Serif JP', serif; font-weight: 300; }
+    .project-title .ur { font-family: 'Noto Nastaliq Urdu', serif; }
+    .project-title .mono { font-family: 'DM Mono', monospace; font-size: 20px; }
+    .project-desc { font-size: 12px; color: #5a6070; line-height: 1.9; letter-spacing: 0.03em; margin-bottom: 24px; }
+    .project-meta { display: flex; flex-direction: column; gap: 6px; }
+    .meta-row { display: flex; justify-content: space-between; align-items: center; border-top: 0.5px solid rgba(0,0,0,0.08); padding-top: 6px; font-size: 10px; }
+    .meta-key { color: var(--fog); letter-spacing: 0.12em; }
+    .meta-val { color: var(--ink); }
+    .project-link { display: inline-block; margin-top: 20px; font-size: 10px; letter-spacing: 0.18em; color: var(--ink); text-decoration: none; border-bottom: 0.5px solid rgba(0,0,0,0.3); padding-bottom: 2px; transition: color 0.2s, border-color 0.2s; }
+    .project-link:hover { color: var(--gold); border-color: var(--gold); }
+    .project.flip { direction: rtl; }
+    .project.flip > * { direction: ltr; }
+    .footer-rule { height: 4px; width: 100%; display: flex; }
+    .footer { max-width: 900px; margin: 0 auto; padding: 28px 60px 44px; display: flex; justify-content: space-between; align-items: center; }
+    .footer-scripts { display: flex; gap: 16px; align-items: center; font-size: 13px; opacity: 0.2; }
+    .footer-scripts .jp { font-family: 'Noto Serif JP', serif; font-weight: 300; }
+    .footer-scripts .ur { font-family: 'Noto Nastaliq Urdu', serif; }
+    .footer-scripts .mono { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.15em; }
+    .footer-right { font-size: 9px; color: var(--fog); letter-spacing: 0.18em; text-align: right; line-height: 2; }
+  </style>
+</head>
+<body>
+
+<div class="rule-top">
+  <div class="rule-seg r1"></div><div class="rule-seg r2"></div><div class="rule-seg r3"></div>
+  <div class="rule-seg r4"></div><div class="rule-seg r5"></div><div class="rule-seg r6"></div>
+  <div class="rule-seg r7"></div><div class="rule-seg r8"></div><div class="rule-seg r9"></div>
+</div>
+
+<div class="topnav">
+  <a class="back-link" href="index.html">← back</a>
+  <span class="nav-sep">/</span>
+  <span class="nav-current">works</span>
+</div>
+
+<div class="hero">
+  <div class="hero-scripts">
+    <span class="script-jp">作品</span>
+    <span class="script-ur">کام</span>
+    <span class="script-mono">works / 2025</span>
+  </div>
+  <h1 class="hero-title">Samiz<em>dat-1</em></h1>
+  <p class="hero-sub">color · culture · code<br>37.7749° N &nbsp;·&nbsp; 31.5497° N &nbsp;·&nbsp; 35.6762° N</p>
+  <div class="hero-divider">
+    <div class="divider-line"></div>
+    <span class="divider-symbol">◈</span>
+    <div class="divider-line"></div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-header">
+    <span class="section-num">01</span>
+    <h2 class="section-title">color studies</h2>
+    <div class="section-rule"></div>
+  </div>
+
+  <div class="projects">
+
+    <div class="project">
+      <div class="project-frame">
+        <iframe src="shiki-carousel.html" title="Shiki carousel" scrolling="no"></iframe>
+      </div>
+      <div class="project-info">
+        <div class="project-tag">
+          <div class="project-tag-dot" style="background:#d4a0a0;"></div>
+          japanese · color study
+        </div>
+        <h3 class="project-title"><span class="jp">色</span> — shiki</h3>
+        <p class="project-desc">Five traditional Japanese colors rendered as an interactive carousel. Each panel draws from a distinct cultural moment — cherry blossom season, the tea ceremony, Edo-period indigo dyeing, autumn persimmons, and sumi ink.</p>
+        <div class="project-meta">
+          <div class="meta-row"><span class="meta-key">language</span><span class="meta-val">HTML · CSS · JS</span></div>
+          <div class="meta-row"><span class="meta-key">typeface</span><span class="meta-val">Noto Serif JP</span></div>
+          <div class="meta-row"><span class="meta-key">script</span><span class="meta-val">日本語</span></div>
+        </div>
+        <a class="project-link" href="shiki-carousel.html">open project →</a>
+      </div>
+    </div>
+
+    <div class="project flip">
+      <div class="project-frame">
+        <iframe src="rang-carousel.html" title="Rang carousel" scrolling="no"></iframe>
+      </div>
+      <div class="project-info">
+        <div class="project-tag">
+          <div class="project-tag-dot" style="background:#c8860a;"></div>
+          punjabi · color study
+        </div>
+        <h3 class="project-title"><span class="ur">رنگ</span> — rang</h3>
+        <p class="project-desc">Five colors from the streets, bazaars, and ceremonies of Lahore. Turmeric weddings, phulkari embroidery, monsoon rains, henna rituals, and pomegranate markets — rendered in a dark, lantern-lit aesthetic with Urdu script and Mughal motifs.</p>
+        <div class="project-meta">
+          <div class="meta-row"><span class="meta-key">language</span><span class="meta-val">HTML · CSS · JS</span></div>
+          <div class="meta-row"><span class="meta-key">typeface</span><span class="meta-val">Noto Nastaliq Urdu</span></div>
+          <div class="meta-row"><span class="meta-key">script</span><span class="meta-val">اردو</span></div>
+        </div>
+        <a class="project-link" href="rang-carousel.html">open project →</a>
+      </div>
+    </div>
+
+    <div class="project">
+      <div class="project-frame">
+        <iframe src="sf-carousel.html" title="SF carousel" scrolling="no"></iframe>
+      </div>
+      <div class="project-info">
+        <div class="project-tag">
+          <div class="project-tag-dot" style="background:#8a9bb0;"></div>
+          san francisco · color study
+        </div>
+        <h3 class="project-title"><span class="mono">SF_COLORS</span></h3>
+        <p class="project-desc">Five colors extracted from the atmosphere of San Francisco — Karl the fog, International Orange, the bay at 2am, Mission District afternoon light, and the bark of a coastal redwood. Rendered in a monospace, utilitarian aesthetic.</p>
+        <div class="project-meta">
+          <div class="meta-row"><span class="meta-key">language</span><span class="meta-val">HTML · CSS · JS</span></div>
+          <div class="meta-row"><span class="meta-key">typeface</span><span class="meta-val">DM Mono</span></div>
+          <div class="meta-row"><span class="meta-key">coordinates</span><span class="meta-val">37.7749° N</span></div>
+        </div>
+        <a class="project-link" href="sf-carousel.html">open project →</a>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div class="footer-rule">
+  <div class="rule-seg r9"></div><div class="rule-seg r8"></div><div class="rule-seg r7"></div>
+  <div class="rule-seg r6"></div><div class="rule-seg r5"></div><div class="rule-seg r4"></div>
+  <div class="rule-seg r3"></div><div class="rule-seg r2"></div><div class="rule-seg r1"></div>
+</div>
+
+<div class="footer">
+  <div class="footer-scripts">
+    <span class="jp">作品集</span><span>·</span>
+    <span class="ur">مجموعہ</span><span>·</span>
+    <span class="mono">portfolio</span>
+  </div>
+  <div class="footer-right">samizdat-1.github.io<br>built with html · css · js</div>
+</div>
+
+</body>
+</html>
