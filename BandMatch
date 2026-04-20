@@ -1,0 +1,1042 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BandMatch — Find Your Marching Band Coach</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --gold: #D4A017;
+    --gold-light: #F5C842;
+    --gold-pale: #FDF3C8;
+    --gold-deep: #A67C00;
+    --black: #0A0A0A;
+    --charcoal: #1A1A1A;
+    --dark: #111111;
+    --gray-800: #2A2A2A;
+    --gray-600: #4A4A4A;
+    --gray-400: #888888;
+    --gray-200: #D0D0D0;
+    --gray-100: #F0EDE3;
+    --cream: #FDFAF2;
+    --white: #FFFFFF;
+    --verified-gold: #D4A017;
+    --radius: 12px;
+    --radius-sm: 8px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--black);
+    color: var(--white);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(10,10,10,0.95);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(212,160,23,0.2);
+    padding: 0 2rem;
+    display: flex; align-items: center; justify-content: space-between;
+    height: 64px;
+  }
+  .nav-logo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 28px;
+    letter-spacing: 3px;
+    color: var(--gold);
+    display: flex; align-items: center; gap: 8px;
+  }
+  .nav-logo span { color: var(--white); }
+  .nav-links { display: flex; align-items: center; gap: 1.5rem; }
+  .nav-links a {
+    color: var(--gray-400); font-size: 14px; font-weight: 500;
+    text-decoration: none; transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--gold); }
+  .nav-cta {
+    display: flex; gap: 10px; align-items: center;
+  }
+  .btn-ghost {
+    padding: 8px 18px; border: 1px solid rgba(212,160,23,0.4);
+    border-radius: 6px; color: var(--gold); font-size: 14px;
+    font-weight: 500; background: transparent; cursor: pointer;
+    transition: all 0.2s; font-family: 'DM Sans', sans-serif;
+  }
+  .btn-ghost:hover { background: rgba(212,160,23,0.1); border-color: var(--gold); }
+  .btn-primary {
+    padding: 8px 20px; background: var(--gold);
+    border: none; border-radius: 6px; color: var(--black);
+    font-size: 14px; font-weight: 600; cursor: pointer;
+    transition: all 0.2s; font-family: 'DM Sans', sans-serif;
+  }
+  .btn-primary:hover { background: var(--gold-light); transform: translateY(-1px); }
+
+  /* ── HERO ── */
+  .hero {
+    padding: 5rem 2rem 3rem;
+    max-width: 1200px; margin: 0 auto;
+    display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center;
+  }
+  .hero-eyebrow {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: rgba(212,160,23,0.12); border: 1px solid rgba(212,160,23,0.3);
+    border-radius: 20px; padding: 6px 14px;
+    font-size: 12px; font-weight: 600; letter-spacing: 1.5px;
+    color: var(--gold); text-transform: uppercase; margin-bottom: 1.5rem;
+  }
+  .hero h1 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(52px, 6vw, 82px);
+    line-height: 0.95; letter-spacing: 2px;
+    margin-bottom: 1.25rem;
+  }
+  .hero h1 em {
+    font-style: normal; color: var(--gold);
+    display: block;
+  }
+  .hero p {
+    font-size: 17px; color: var(--gray-400);
+    line-height: 1.7; max-width: 440px; margin-bottom: 2rem;
+  }
+  .hero-stats {
+    display: flex; gap: 2rem; margin-top: 2.5rem;
+    padding-top: 2rem; border-top: 1px solid rgba(255,255,255,0.08);
+  }
+  .hero-stat-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 34px; color: var(--gold); letter-spacing: 1px;
+  }
+  .hero-stat-label { font-size: 12px; color: var(--gray-400); margin-top: 2px; }
+  .hero-visual {
+    position: relative; height: 420px;
+  }
+  .hero-card-stack {
+    position: relative; height: 100%;
+  }
+  .hero-instructor-card {
+    position: absolute;
+    background: var(--charcoal);
+    border: 1px solid rgba(212,160,23,0.2);
+    border-radius: var(--radius);
+    padding: 1.25rem;
+    width: 260px;
+  }
+  .hero-instructor-card:first-child {
+    top: 0; left: 20px;
+    box-shadow: 0 20px 60px rgba(212,160,23,0.15);
+    border-color: rgba(212,160,23,0.4);
+  }
+  .hero-instructor-card:nth-child(2) {
+    top: 120px; right: 0;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+  }
+  .hero-instructor-card:nth-child(3) {
+    bottom: 20px; left: 40px;
+  }
+  .hic-img {
+    width: 52px; height: 52px; border-radius: 50%;
+    object-fit: cover; margin-bottom: 10px;
+    border: 2px solid rgba(212,160,23,0.4);
+  }
+  .hic-name { font-size: 15px; font-weight: 600; margin-bottom: 2px; }
+  .hic-inst { font-size: 12px; color: var(--gold); font-weight: 500; margin-bottom: 6px; }
+  .hic-stars { color: var(--gold); font-size: 12px; }
+  .hic-price { font-size: 13px; color: var(--gray-400); margin-top: 6px; }
+  .hic-price strong { color: var(--white); }
+  .verified-badge {
+    display: inline-flex; align-items: center; gap: 4px;
+    background: rgba(212,160,23,0.15); color: var(--gold);
+    font-size: 11px; font-weight: 600; padding: 3px 8px;
+    border-radius: 4px; margin-top: 6px;
+  }
+
+  /* ── FILTER BAR ── */
+  .filter-section {
+    background: var(--charcoal);
+    border-top: 1px solid rgba(212,160,23,0.15);
+    border-bottom: 1px solid rgba(212,160,23,0.15);
+    padding: 1.5rem 2rem;
+    position: sticky; top: 64px; z-index: 90;
+  }
+  .filter-inner {
+    max-width: 1200px; margin: 0 auto;
+    display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;
+  }
+  .filter-label { font-size: 12px; font-weight: 600; color: var(--gold); letter-spacing: 1px; text-transform: uppercase; white-space: nowrap; }
+  .filter-select {
+    background: var(--gray-800); border: 1px solid rgba(255,255,255,0.1);
+    color: var(--white); padding: 8px 14px; border-radius: 6px;
+    font-size: 13px; font-family: 'DM Sans', sans-serif; cursor: pointer;
+    transition: border-color 0.2s;
+  }
+  .filter-select:focus { outline: none; border-color: var(--gold); }
+  .filter-toggle {
+    display: flex; align-items: center; gap: 6px;
+    background: var(--gray-800); border: 1px solid rgba(255,255,255,0.1);
+    color: var(--gray-400); padding: 8px 14px; border-radius: 6px;
+    font-size: 13px; cursor: pointer; transition: all 0.2s;
+    font-family: 'DM Sans', sans-serif;
+  }
+  .filter-toggle.active { background: rgba(212,160,23,0.15); border-color: var(--gold); color: var(--gold); }
+  .result-count { margin-left: auto; font-size: 13px; color: var(--gray-400); }
+  .result-count strong { color: var(--white); }
+
+  /* ── INSTRUCTOR GRID ── */
+  .instructors-section {
+    max-width: 1200px; margin: 0 auto;
+    padding: 2.5rem 2rem;
+  }
+  .section-header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 2rem;
+  }
+  .section-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 32px; letter-spacing: 2px;
+  }
+  .section-title span { color: var(--gold); }
+  .sort-select {
+    background: var(--gray-800); border: 1px solid rgba(255,255,255,0.1);
+    color: var(--white); padding: 6px 12px; border-radius: 6px;
+    font-size: 12px; font-family: 'DM Sans', sans-serif; cursor: pointer;
+  }
+
+  .instructor-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .instructor-card {
+    background: var(--charcoal);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: var(--radius);
+    overflow: hidden;
+    transition: transform 0.25s, border-color 0.25s, box-shadow 0.25s;
+    cursor: pointer;
+  }
+  .instructor-card:hover {
+    transform: translateY(-4px);
+    border-color: rgba(212,160,23,0.5);
+    box-shadow: 0 12px 40px rgba(212,160,23,0.12);
+  }
+  .card-img-wrapper { position: relative; height: 200px; overflow: hidden; }
+  .card-img-wrapper img {
+    width: 100%; height: 100%; object-fit: cover;
+    transition: transform 0.4s;
+  }
+  .instructor-card:hover .card-img-wrapper img { transform: scale(1.04); }
+  .card-instrument-badge {
+    position: absolute; bottom: 10px; left: 10px;
+    background: var(--black); border: 1px solid rgba(212,160,23,0.5);
+    color: var(--gold); font-size: 11px; font-weight: 600;
+    padding: 4px 10px; border-radius: 4px; letter-spacing: 0.5px;
+  }
+  .card-online-badge {
+    position: absolute; top: 10px; right: 10px;
+    background: rgba(0,200,100,0.2); border: 1px solid rgba(0,200,100,0.4);
+    color: #00C864; font-size: 11px; font-weight: 600;
+    padding: 4px 10px; border-radius: 4px;
+    display: flex; align-items: center; gap: 5px;
+  }
+  .online-dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: #00C864; animation: pulse 2s infinite;
+  }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+
+  .card-body { padding: 1.1rem 1.25rem 1.25rem; }
+  .card-top-row {
+    display: flex; align-items: flex-start; justify-content: space-between;
+    margin-bottom: 0.5rem;
+  }
+  .card-name { font-size: 16px; font-weight: 600; line-height: 1.3; }
+  .card-verify {
+    display: flex; align-items: center; gap: 4px;
+    font-size: 11px; font-weight: 700; color: var(--gold);
+    background: rgba(212,160,23,0.12);
+    border: 1px solid rgba(212,160,23,0.3);
+    padding: 3px 8px; border-radius: 4px; white-space: nowrap;
+  }
+  .card-verify svg { width: 12px; height: 12px; fill: var(--gold); }
+  .card-unverified {
+    font-size: 11px; font-weight: 600; color: var(--gray-400);
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    padding: 3px 8px; border-radius: 4px; white-space: nowrap;
+  }
+  .card-location { font-size: 12px; color: var(--gray-400); margin-bottom: 0.6rem; }
+  .card-rating-row {
+    display: flex; align-items: center; gap: 8px; margin-bottom: 0.75rem;
+  }
+  .stars { color: var(--gold); font-size: 13px; }
+  .rating-num { font-size: 13px; font-weight: 600; }
+  .review-count { font-size: 12px; color: var(--gray-400); }
+  .card-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 0.9rem; }
+  .tag {
+    font-size: 11px; padding: 3px 9px; border-radius: 4px;
+    background: var(--gray-800); color: var(--gray-400);
+    border: 1px solid rgba(255,255,255,0.08);
+  }
+  .card-bottom-row {
+    display: flex; align-items: center; justify-content: space-between;
+    padding-top: 0.9rem;
+    border-top: 1px solid rgba(255,255,255,0.06);
+  }
+  .card-price { font-size: 15px; font-weight: 600; }
+  .card-price span { font-size: 12px; font-weight: 400; color: var(--gray-400); }
+  .card-book-btn {
+    padding: 7px 16px; background: var(--gold);
+    border: none; border-radius: 6px; color: var(--black);
+    font-size: 13px; font-weight: 600; cursor: pointer;
+    font-family: 'DM Sans', sans-serif; transition: all 0.2s;
+  }
+  .card-book-btn:hover { background: var(--gold-light); }
+
+  /* ── MODAL ── */
+  .modal-overlay {
+    display: none; position: fixed; inset: 0;
+    background: rgba(0,0,0,0.85); z-index: 200;
+    align-items: center; justify-content: center;
+    padding: 1rem;
+  }
+  .modal-overlay.open { display: flex; }
+  .modal {
+    background: var(--charcoal);
+    border: 1px solid rgba(212,160,23,0.3);
+    border-radius: 16px; width: 100%; max-width: 780px;
+    max-height: 90vh; overflow-y: auto;
+    box-shadow: 0 24px 80px rgba(0,0,0,0.7);
+  }
+  .modal-header {
+    padding: 1.5rem 1.75rem 0;
+    display: flex; align-items: flex-start; gap: 1.25rem;
+    position: relative;
+  }
+  .modal-close {
+    position: absolute; top: 1.25rem; right: 1.25rem;
+    background: var(--gray-800); border: none;
+    color: var(--gray-400); font-size: 20px; cursor: pointer;
+    width: 32px; height: 32px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.2s;
+  }
+  .modal-close:hover { background: var(--gray-600); color: var(--white); }
+  .modal-img {
+    width: 80px; height: 80px; border-radius: 50%;
+    object-fit: cover; border: 3px solid var(--gold); flex-shrink: 0;
+  }
+  .modal-name { font-size: 22px; font-weight: 600; margin-bottom: 4px; }
+  .modal-inst { color: var(--gold); font-size: 14px; font-weight: 600; margin-bottom: 6px; }
+  .modal-loc { color: var(--gray-400); font-size: 13px; }
+  .modal-body { padding: 1.25rem 1.75rem; }
+  .modal-tabs {
+    display: flex; gap: 0; border-bottom: 1px solid rgba(255,255,255,0.08);
+    margin-bottom: 1.25rem;
+  }
+  .modal-tab {
+    padding: 10px 18px; font-size: 13px; font-weight: 500;
+    color: var(--gray-400); cursor: pointer; border-bottom: 2px solid transparent;
+    transition: all 0.2s; background: none; border-top: none; border-left: none; border-right: none;
+    font-family: 'DM Sans', sans-serif;
+  }
+  .modal-tab.active { color: var(--gold); border-bottom-color: var(--gold); }
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; }
+
+  /* About tab */
+  .about-bio { font-size: 14px; color: var(--gray-400); line-height: 1.75; margin-bottom: 1.25rem; }
+  .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.25rem; }
+  .about-item label { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: var(--gray-400); display: block; margin-bottom: 4px; }
+  .about-item p { font-size: 14px; font-weight: 500; }
+
+  /* Schedule tab */
+  .schedule-note { font-size: 13px; color: var(--gray-400); margin-bottom: 1rem; }
+  .time-slot-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 8px; margin-bottom: 1.25rem; }
+  .time-slot {
+    padding: 10px; border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 8px; text-align: center; cursor: pointer;
+    transition: all 0.2s;
+  }
+  .time-slot:hover { border-color: var(--gold); background: rgba(212,160,23,0.08); }
+  .time-slot.selected { background: rgba(212,160,23,0.2); border-color: var(--gold); }
+  .time-slot.booked { opacity: 0.35; cursor: not-allowed; background: rgba(255,255,255,0.03); }
+  .ts-day { font-size: 11px; color: var(--gray-400); margin-bottom: 3px; }
+  .ts-time { font-size: 13px; font-weight: 600; }
+  .ts-dur { font-size: 11px; color: var(--gray-400); margin-top: 2px; }
+
+  /* Book tab */
+  .booking-form { display: grid; gap: 1rem; }
+  .form-group label {
+    display: block; font-size: 12px; font-weight: 600;
+    color: var(--gray-400); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px;
+  }
+  .form-input {
+    width: 100%; background: var(--gray-800);
+    border: 1px solid rgba(255,255,255,0.1);
+    color: var(--white); padding: 10px 14px; border-radius: 8px;
+    font-size: 14px; font-family: 'DM Sans', sans-serif; transition: border-color 0.2s;
+  }
+  .form-input:focus { outline: none; border-color: var(--gold); }
+  .payment-options { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .pay-option {
+    padding: 12px; border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 8px; cursor: pointer; transition: all 0.2s;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .pay-option:hover { border-color: var(--gold); }
+  .pay-option.selected { border-color: var(--gold); background: rgba(212,160,23,0.1); }
+  .pay-icon { font-size: 20px; }
+  .pay-label { font-size: 13px; font-weight: 600; }
+  .pay-sublabel { font-size: 11px; color: var(--gray-400); }
+  .booking-summary {
+    background: var(--gray-800); border-radius: 10px; padding: 1rem;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .booking-total-label { font-size: 12px; color: var(--gray-400); }
+  .booking-total { font-size: 22px; font-weight: 700; color: var(--gold); }
+  .confirm-btn {
+    width: 100%; padding: 14px; background: var(--gold);
+    border: none; border-radius: 10px; color: var(--black);
+    font-size: 15px; font-weight: 700; cursor: pointer;
+    font-family: 'DM Sans', sans-serif; transition: all 0.2s; margin-top: 0.5rem;
+  }
+  .confirm-btn:hover { background: var(--gold-light); transform: translateY(-1px); }
+
+  /* Message tab */
+  .message-thread {
+    background: var(--gray-800); border-radius: 10px; padding: 1rem;
+    min-height: 180px; margin-bottom: 1rem; display: flex;
+    flex-direction: column; gap: 10px;
+  }
+  .msg { max-width: 75%; }
+  .msg.them { align-self: flex-start; }
+  .msg.me { align-self: flex-end; }
+  .msg-bubble {
+    padding: 10px 14px; border-radius: 12px; font-size: 13px; line-height: 1.5;
+  }
+  .msg.them .msg-bubble { background: var(--gray-600); color: var(--white); border-radius: 4px 12px 12px 12px; }
+  .msg.me .msg-bubble { background: rgba(212,160,23,0.25); color: var(--gold-pale); border-radius: 12px 4px 12px 12px; }
+  .msg-time { font-size: 11px; color: var(--gray-400); margin-top: 4px; padding: 0 4px; }
+  .msg.me .msg-time { text-align: right; }
+  .msg-compose { display: flex; gap: 8px; }
+  .msg-input {
+    flex: 1; background: var(--gray-800); border: 1px solid rgba(255,255,255,0.1);
+    color: var(--white); padding: 10px 14px; border-radius: 8px;
+    font-size: 13px; font-family: 'DM Sans', sans-serif;
+  }
+  .msg-input:focus { outline: none; border-color: var(--gold); }
+  .msg-send {
+    padding: 10px 18px; background: var(--gold); border: none;
+    border-radius: 8px; color: var(--black); font-weight: 700;
+    cursor: pointer; font-family: 'DM Sans', sans-serif; font-size: 13px;
+  }
+
+  /* ── BECOME A TUTOR CTA ── */
+  .tutor-cta {
+    background: linear-gradient(135deg, var(--charcoal) 0%, var(--gray-800) 100%);
+    border-top: 1px solid rgba(212,160,23,0.2);
+    border-bottom: 1px solid rgba(212,160,23,0.2);
+    padding: 4rem 2rem; text-align: center;
+    position: relative; overflow: hidden;
+  }
+  .tutor-cta::before {
+    content: '';
+    position: absolute; top: 0; left: 50%; transform: translateX(-50%);
+    width: 600px; height: 2px; background: var(--gold); opacity: 0.4;
+  }
+  .tutor-cta h2 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 52px; letter-spacing: 3px; margin-bottom: 1rem;
+  }
+  .tutor-cta h2 span { color: var(--gold); }
+  .tutor-cta p { color: var(--gray-400); font-size: 17px; max-width: 480px; margin: 0 auto 2rem; }
+  .cta-features { display: flex; justify-content: center; gap: 3rem; margin-bottom: 2.5rem; }
+  .cta-feat { text-align: center; }
+  .cta-feat-icon { font-size: 28px; margin-bottom: 8px; }
+  .cta-feat-label { font-size: 13px; color: var(--gray-400); }
+
+  /* ── FOOTER ── */
+  footer {
+    background: var(--dark); border-top: 1px solid rgba(255,255,255,0.06);
+    padding: 2.5rem 2rem;
+  }
+  .footer-inner {
+    max-width: 1200px; margin: 0 auto;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .footer-logo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 22px; letter-spacing: 3px; color: var(--gold);
+  }
+  .footer-copy { font-size: 12px; color: var(--gray-400); }
+
+  /* ── TOAST ── */
+  .toast {
+    position: fixed; bottom: 2rem; right: 2rem; z-index: 300;
+    background: var(--gold); color: var(--black);
+    padding: 12px 20px; border-radius: 8px; font-weight: 600; font-size: 14px;
+    transform: translateY(100px); opacity: 0;
+    transition: all 0.3s; pointer-events: none;
+  }
+  .toast.show { transform: translateY(0); opacity: 1; }
+
+  @media (max-width: 768px) {
+    .hero { grid-template-columns: 1fr; }
+    .hero-visual { display: none; }
+    .about-grid { grid-template-columns: 1fr; }
+    .cta-features { flex-direction: column; gap: 1.5rem; }
+    .footer-inner { flex-direction: column; gap: 1rem; text-align: center; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">🎺 BAND<span>MATCH</span></div>
+  <div class="nav-links">
+    <a href="#">Browse Instructors</a>
+    <a href="#">How It Works</a>
+    <a href="#">Bay Area</a>
+  </div>
+  <div class="nav-cta">
+    <button class="btn-ghost" onclick="showToast('Sign in coming soon!')">Sign In</button>
+    <button class="btn-primary" onclick="openTutorSignup()">Become a Tutor</button>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section style="background: var(--black); border-bottom: 1px solid rgba(212,160,23,0.1);">
+  <div class="hero">
+    <div class="hero-content">
+      <div class="hero-eyebrow">⭐ Bay Area's #1 Marching Band Platform</div>
+      <h1>FIND YOUR<em>MARCHING</em>COACH.</h1>
+      <p>Connect with verified marching band instructors across the Bay Area. Book in-person or online sessions, pay securely, and level up your performance.</p>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;">
+        <button class="btn-primary" style="padding:12px 28px;font-size:15px;" onclick="document.getElementById('browse').scrollIntoView({behavior:'smooth'})">Browse Instructors</button>
+        <button class="btn-ghost" style="padding:12px 28px;font-size:15px;" onclick="openTutorSignup()">List Your Services</button>
+      </div>
+      <div class="hero-stats">
+        <div><div class="hero-stat-num">142+</div><div class="hero-stat-label">Verified Instructors</div></div>
+        <div><div class="hero-stat-num">2,800+</div><div class="hero-stat-label">Sessions Booked</div></div>
+        <div><div class="hero-stat-num">4.9★</div><div class="hero-stat-label">Avg. Rating</div></div>
+      </div>
+    </div>
+    <div class="hero-visual">
+      <div class="hero-card-stack">
+        <div class="hero-instructor-card">
+          <img src="https://randomuser.me/api/portraits/women/44.jpg" class="hic-img" alt="instructor">
+          <div class="hic-name">Priya Nair</div>
+          <div class="hic-inst">🎺 Trumpet · Fremont</div>
+          <div class="hic-stars">★★★★★ <span style="color:var(--gray-400);font-size:11px;">5.0 (48 reviews)</span></div>
+          <div class="verified-badge">⭐ Verified Pro</div>
+          <div class="hic-price"><strong>$65</strong> /hr</div>
+        </div>
+        <div class="hero-instructor-card">
+          <img src="https://randomuser.me/api/portraits/men/32.jpg" class="hic-img" alt="instructor">
+          <div class="hic-name">Marcus Webb</div>
+          <div class="hic-inst">🥁 Snare Drum · Oakland</div>
+          <div class="hic-stars">★★★★★ <span style="color:var(--gray-400);font-size:11px;">4.9 (61 reviews)</span></div>
+          <div class="verified-badge">⭐ Verified Pro</div>
+          <div class="hic-price"><strong>$55</strong> /hr</div>
+        </div>
+        <div class="hero-instructor-card">
+          <img src="https://randomuser.me/api/portraits/women/68.jpg" class="hic-img" alt="instructor">
+          <div class="hic-name">Dana Torres</div>
+          <div class="hic-inst">🎸 Color Guard · San Jose</div>
+          <div class="hic-stars">★★★★☆ <span style="color:var(--gray-400);font-size:11px;">4.7 (29 reviews)</span></div>
+          <div class="hic-price"><strong>$50</strong> /hr</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FILTER BAR -->
+<div class="filter-section">
+  <div class="filter-inner">
+    <span class="filter-label">Filter:</span>
+    <select class="filter-select" id="instrFilter" onchange="filterInstructors()">
+      <option value="">All Instruments</option>
+      <option>Trumpet</option>
+      <option>Trombone</option>
+      <option>Snare Drum</option>
+      <option>Bass Drum</option>
+      <option>Flute</option>
+      <option>Mellophone</option>
+      <option>Baritone</option>
+      <option>Color Guard</option>
+      <option>Drum Major</option>
+    </select>
+    <select class="filter-select" id="radiusFilter" onchange="filterInstructors()">
+      <option value="">Any Distance</option>
+      <option>Within 5 miles</option>
+      <option>Within 10 miles</option>
+      <option>Within 25 miles</option>
+    </select>
+    <select class="filter-select" id="priceFilter" onchange="filterInstructors()">
+      <option value="">Any Price</option>
+      <option>Under $40/hr</option>
+      <option>$40–$60/hr</option>
+      <option>$60+/hr</option>
+    </select>
+    <button class="filter-toggle" id="verifiedToggle" onclick="toggleVerified()">⭐ Verified Only</button>
+    <button class="filter-toggle" id="onlineToggle" onclick="toggleOnline()">🌐 Online Available</button>
+    <div class="result-count">Showing <strong id="resultCount">12</strong> instructors</div>
+  </div>
+</div>
+
+<!-- INSTRUCTORS GRID -->
+<section class="instructors-section" id="browse">
+  <div class="section-header">
+    <div class="section-title">BAY AREA <span>INSTRUCTORS</span></div>
+    <select class="sort-select" onchange="showToast('Sorting updated')">
+      <option>Top Rated</option>
+      <option>Price: Low to High</option>
+      <option>Price: High to Low</option>
+      <option>Most Reviews</option>
+      <option>Nearest First</option>
+    </select>
+  </div>
+
+  <div class="instructor-grid" id="instructorGrid">
+    <!-- Cards injected by JS -->
+  </div>
+</section>
+
+<!-- TUTOR CTA -->
+<section class="tutor-cta">
+  <h2>TEACH WHAT YOU <span>LOVE.</span></h2>
+  <p>Join 142 Bay Area instructors already earning on BandMatch. Set your own schedule, rates, and availability.</p>
+  <div class="cta-features">
+    <div class="cta-feat"><div class="cta-feat-icon">💰</div><div class="cta-feat-label">You keep 85%</div></div>
+    <div class="cta-feat"><div class="cta-feat-icon">📅</div><div class="cta-feat-label">Flexible scheduling</div></div>
+    <div class="cta-feat"><div class="cta-feat-icon">⭐</div><div class="cta-feat-label">Get verified status</div></div>
+    <div class="cta-feat"><div class="cta-feat-icon">💬</div><div class="cta-feat-label">Built-in messaging</div></div>
+  </div>
+  <button class="btn-primary" style="padding:14px 36px;font-size:16px;" onclick="openTutorSignup()">Apply as an Instructor</button>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-logo">🎺 BANDMATCH</div>
+    <div class="footer-copy">© 2025 BandMatch · Bay Area, California · Built for marching band families</div>
+  </div>
+</footer>
+
+<!-- INSTRUCTOR MODAL -->
+<div class="modal-overlay" id="modalOverlay" onclick="closeModalIfBg(event)">
+  <div class="modal" id="modal">
+    <div class="modal-header">
+      <img src="" id="modalImg" class="modal-img" alt="">
+      <div>
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:4px;">
+          <div class="modal-name" id="modalName"></div>
+          <div id="modalVerifyBadge"></div>
+        </div>
+        <div class="modal-inst" id="modalInst"></div>
+        <div style="display:flex;align-items:center;gap:10px;">
+          <div style="color:var(--gold);font-size:13px;" id="modalStars"></div>
+          <div class="modal-loc" id="modalLoc"></div>
+        </div>
+      </div>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="modal-tabs">
+        <button class="modal-tab active" onclick="switchTab('about')">About</button>
+        <button class="modal-tab" onclick="switchTab('schedule')">Schedule & Slots</button>
+        <button class="modal-tab" onclick="switchTab('book')">Book & Pay</button>
+        <button class="modal-tab" onclick="switchTab('message')">Message</button>
+      </div>
+
+      <!-- ABOUT -->
+      <div class="tab-panel active" id="tab-about">
+        <p class="about-bio" id="modalBio"></p>
+        <div class="about-grid">
+          <div class="about-item"><label>Experience</label><p id="modalExp"></p></div>
+          <div class="about-item"><label>Location</label><p id="modalCity"></p></div>
+          <div class="about-item"><label>Session Rate</label><p id="modalRate"></p></div>
+          <div class="about-item"><label>Online Sessions</label><p id="modalOnline"></p></div>
+        </div>
+        <div class="card-tags" id="modalTags"></div>
+      </div>
+
+      <!-- SCHEDULE -->
+      <div class="tab-panel" id="tab-schedule">
+        <p class="schedule-note">Select an available time slot to begin booking. Gray slots are already reserved.</p>
+        <div class="time-slot-grid" id="timeSlotGrid"></div>
+        <button class="btn-primary" style="width:100%;" onclick="switchTab('book')">Continue to Book →</button>
+      </div>
+
+      <!-- BOOK -->
+      <div class="tab-panel" id="tab-book">
+        <div class="booking-form">
+          <div class="form-group">
+            <label>Your Name</label>
+            <input class="form-input" type="text" placeholder="Full name">
+          </div>
+          <div class="form-group">
+            <label>Your Email</label>
+            <input class="form-input" type="email" placeholder="email@example.com">
+          </div>
+          <div class="form-group">
+            <label>Instrument / Focus</label>
+            <input class="form-input" type="text" placeholder="e.g. Trumpet, marching fundamentals">
+          </div>
+          <div class="form-group">
+            <label>Session Type</label>
+            <select class="form-input">
+              <option>In-Person (Bay Area)</option>
+              <option>Online (Zoom / Meet)</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Payment Method</label>
+            <div class="payment-options">
+              <div class="pay-option selected" onclick="selectPay(this)">
+                <div class="pay-icon">💳</div>
+                <div><div class="pay-label">Card (Prepay)</div><div class="pay-sublabel">Secured & held until session</div></div>
+              </div>
+              <div class="pay-option" onclick="selectPay(this)">
+                <div class="pay-icon">📱</div>
+                <div><div class="pay-label">Venmo / PayPal</div><div class="pay-sublabel">Direct to instructor</div></div>
+              </div>
+            </div>
+          </div>
+          <div class="booking-summary">
+            <div><div class="booking-total-label">Session Total</div><div class="booking-total" id="bookingPrice">$65</div></div>
+            <div style="font-size:12px;color:var(--gray-400);text-align:right;">1 hr · prepaid<br>Secured via BandMatch</div>
+          </div>
+          <button class="confirm-btn" onclick="confirmBooking()">Confirm & Pay →</button>
+        </div>
+      </div>
+
+      <!-- MESSAGE -->
+      <div class="tab-panel" id="tab-message">
+        <div class="message-thread" id="msgThread">
+          <div class="msg them">
+            <div class="msg-bubble" id="msgIntro"></div>
+            <div class="msg-time">Yesterday 3:04 PM</div>
+          </div>
+        </div>
+        <div class="msg-compose">
+          <input class="msg-input" id="msgInput" type="text" placeholder="Ask about availability, experience, goals..." onkeydown="if(event.key==='Enter') sendMsg()">
+          <button class="msg-send" onclick="sendMsg()">Send</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TUTOR SIGNUP MODAL -->
+<div class="modal-overlay" id="tutorModal" onclick="closeTutorIfBg(event)">
+  <div class="modal" style="max-width:520px;">
+    <div class="modal-header" style="padding-bottom:1rem;">
+      <div>
+        <div class="modal-name">Become a BandMatch Instructor</div>
+        <div style="color:var(--gray-400);font-size:13px;margin-top:4px;">Start earning by sharing your marching expertise</div>
+      </div>
+      <button class="modal-close" onclick="document.getElementById('tutorModal').classList.remove('open')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="booking-form">
+        <div class="form-group"><label>Full Name</label><input class="form-input" type="text" placeholder="Your name"></div>
+        <div class="form-group"><label>Primary Instrument</label>
+          <select class="form-input">
+            <option>Trumpet</option><option>Trombone</option><option>Snare Drum</option>
+            <option>Bass Drum</option><option>Flute</option><option>Mellophone</option>
+            <option>Baritone</option><option>Color Guard</option><option>Drum Major</option>
+          </select>
+        </div>
+        <div class="form-group"><label>City (Bay Area)</label><input class="form-input" type="text" placeholder="e.g. Fremont, Oakland, San Jose"></div>
+        <div class="form-group"><label>Hourly Rate ($)</label><input class="form-input" type="number" placeholder="e.g. 55"></div>
+        <div class="form-group"><label>Brief Bio</label><textarea class="form-input" rows="3" placeholder="Tell students about your experience and teaching style..."></textarea></div>
+        <button class="confirm-btn" onclick="submitTutor()">Submit Application →</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const INSTRUCTORS = [
+  {
+    name: "Priya Nair", instrument: "Trumpet", city: "Fremont", rating: 5.0, reviews: 48,
+    price: 65, verified: true, online: true,
+    img: "https://randomuser.me/api/portraits/women/44.jpg",
+    exp: "12 years · DCI Finalist", tags: ["Beginner Friendly","Competition Prep","Music Theory","Marching Technique"],
+    bio: "Former DCI finalist and 12-year teaching veteran specializing in trumpet fundamentals and competitive marching. I coach students from beginner to all-state level across Fremont and the greater East Bay.",
+    slots: [{day:"Mon",time:"4:00 PM",dur:"60 min"},{day:"Mon",time:"5:30 PM",dur:"60 min",booked:true},{day:"Wed",time:"3:00 PM",dur:"90 min"},{day:"Thu",time:"4:30 PM",dur:"60 min"},{day:"Sat",time:"10:00 AM",dur:"60 min"},{day:"Sat",time:"11:30 AM",dur:"60 min",booked:true}]
+  },
+  {
+    name: "Marcus Webb", instrument: "Snare Drum", city: "Oakland", rating: 4.9, reviews: 61,
+    price: 55, verified: true, online: true,
+    img: "https://randomuser.me/api/portraits/men/32.jpg",
+    exp: "10 years · Blue Devils Alum", tags: ["Rudimental Drumming","Battery Ensemble","Advanced Technique","SoCal Style"],
+    bio: "Blue Devils alum and battery ensemble director with 10 years of teaching experience. I focus on clean rudiments, tone production, and competitive marching percussion across all skill levels.",
+    slots: [{day:"Tue",time:"5:00 PM",dur:"60 min"},{day:"Thu",time:"5:00 PM",dur:"60 min"},{day:"Fri",time:"3:30 PM",dur:"60 min",booked:true},{day:"Sat",time:"9:00 AM",dur:"90 min"},{day:"Sun",time:"2:00 PM",dur:"60 min"}]
+  },
+  {
+    name: "Dana Torres", instrument: "Color Guard", city: "San Jose", rating: 4.7, reviews: 29,
+    price: 50, verified: false, online: true,
+    img: "https://randomuser.me/api/portraits/women/68.jpg",
+    exp: "8 years · WGI Competitor", tags: ["Rifle","Sabre","Flag Technique","Choreography"],
+    bio: "WGI competitor and guard director with 8 years of performance and instruction. I coach flag, rifle, sabre, and movement technique. Focused on expression, precision, and stage presence.",
+    slots: [{day:"Mon",time:"6:00 PM",dur:"60 min"},{day:"Wed",time:"6:00 PM",dur:"60 min"},{day:"Sat",time:"1:00 PM",dur:"90 min"},{day:"Sat",time:"3:00 PM",dur:"60 min",booked:true}]
+  },
+  {
+    name: "James Okeke", instrument: "Trombone", city: "Berkeley", rating: 4.8, reviews: 37,
+    price: 60, verified: true, online: false,
+    img: "https://randomuser.me/api/portraits/men/54.jpg",
+    exp: "9 years · Cal Band Director", tags: ["Slide Technique","Sight Reading","Ensemble","Drill Fundamentals"],
+    bio: "Cal Band section leader turned instructor. I specialize in trombone slide technique, intonation, and ensemble performance. Ideal for students preparing for high school and collegiate bands.",
+    slots: [{day:"Tue",time:"4:00 PM",dur:"60 min"},{day:"Thu",time:"4:00 PM",dur:"60 min"},{day:"Sat",time:"11:00 AM",dur:"60 min"},{day:"Sun",time:"10:00 AM",dur:"90 min",booked:true}]
+  },
+  {
+    name: "Sofia Ramirez", instrument: "Flute", city: "San Francisco", rating: 5.0, reviews: 22,
+    price: 70, verified: true, online: true,
+    img: "https://randomuser.me/api/portraits/women/12.jpg",
+    exp: "15 years · SF Symphony", tags: ["Tone Production","Posture","Marching Form","High School Prep"],
+    bio: "Classically trained flutist with SF Symphony experience now dedicated to marching band instruction. I bring orchestral tone production principles into the marching context for standout sound quality.",
+    slots: [{day:"Mon",time:"3:30 PM",dur:"60 min"},{day:"Wed",time:"5:00 PM",dur:"60 min"},{day:"Fri",time:"4:00 PM",dur:"60 min",booked:true},{day:"Sun",time:"11:00 AM",dur:"60 min"}]
+  },
+  {
+    name: "Kevin Park", instrument: "Drum Major", city: "Palo Alto", rating: 4.6, reviews: 18,
+    price: 45, verified: false, online: true,
+    img: "https://randomuser.me/api/portraits/men/78.jpg",
+    exp: "6 years · Head Drum Major", tags: ["Leadership","Conducting","Field Command","Score Reading"],
+    bio: "Former head drum major who now coaches aspiring leaders. I work on conducting patterns, field command presence, score reading, and the unique communication skills needed to lead a large ensemble.",
+    slots: [{day:"Tue",time:"6:00 PM",dur:"60 min"},{day:"Thu",time:"6:00 PM",dur:"60 min"},{day:"Sat",time:"2:00 PM",dur:"60 min"},{day:"Sat",time:"4:00 PM",dur:"60 min"}]
+  },
+  {
+    name: "Amara Johnson", instrument: "Mellophone", city: "Hayward", rating: 4.9, reviews: 41,
+    price: 55, verified: true, online: true,
+    img: "https://randomuser.me/api/portraits/women/33.jpg",
+    exp: "11 years · DCI Semi-Finalist", tags: ["Intonation","Mellophone to French Horn","Marching Drill","Competition"],
+    bio: "DCI semi-finalist and mellophone specialist helping students bridge the gap between marching and concert technique. Excellent for students transitioning between mellophone and French horn.",
+    slots: [{day:"Mon",time:"5:00 PM",dur:"60 min"},{day:"Wed",time:"4:00 PM",dur:"60 min"},{day:"Thu",time:"5:30 PM",dur:"60 min",booked:true},{day:"Sun",time:"1:00 PM",dur:"90 min"}]
+  },
+  {
+    name: "Tyler Nguyen", instrument: "Bass Drum", city: "San Leandro", rating: 4.7, reviews: 25,
+    price: 48, verified: false, online: false,
+    img: "https://randomuser.me/api/portraits/men/22.jpg",
+    exp: "7 years · Battery Captain", tags: ["Bass Line","Ensemble Timing","Physical Conditioning","Fundamentals"],
+    bio: "Former bass drum captain specializing in bass line technique, ensemble timing, and the physical conditioning required to march effectively. Great for students new to battery percussion.",
+    slots: [{day:"Tue",time:"3:30 PM",dur:"60 min"},{day:"Thu",time:"3:30 PM",dur:"60 min"},{day:"Sat",time:"10:00 AM",dur:"60 min"},{day:"Sat",time:"12:00 PM",dur:"60 min",booked:true}]
+  },
+  {
+    name: "Leila Hassan", instrument: "Baritone", city: "Milpitas", rating: 4.8, reviews: 33,
+    price: 58, verified: true, online: true,
+    img: "https://randomuser.me/api/portraits/women/57.jpg",
+    exp: "10 years · All-State Performer", tags: ["Low Brass","Breath Support","Marching Fundamentals","All-State Prep"],
+    bio: "All-State low brass performer coaching baritone and euphonium students at all levels. I focus on breath support, tone development, and preparing students for all-state and competitive auditions.",
+    slots: [{day:"Mon",time:"4:30 PM",dur:"60 min"},{day:"Wed",time:"3:30 PM",dur:"60 min"},{day:"Fri",time:"5:00 PM",dur:"60 min"},{day:"Sun",time:"10:00 AM",dur:"60 min",booked:true}]
+  },
+  {
+    name: "Derek Chang", instrument: "Trumpet", city: "Pleasanton", rating: 4.5, reviews: 14,
+    price: 40, verified: false, online: true,
+    img: "https://randomuser.me/api/portraits/men/66.jpg",
+    exp: "5 years · Section Leader", tags: ["Beginner","Scales & Arpeggios","Lip Slurs","Band Prep"],
+    bio: "Recent college grad and former section leader offering affordable trumpet lessons for beginners and intermediate players. Passionate about making marching band accessible to every student.",
+    slots: [{day:"Tue",time:"5:30 PM",dur:"60 min"},{day:"Thu",time:"5:30 PM",dur:"60 min"},{day:"Sat",time:"11:00 AM",dur:"60 min"},{day:"Sat",time:"1:30 PM",dur:"60 min"}]
+  },
+  {
+    name: "Natasha Ivanova", instrument: "Color Guard", city: "Santa Clara", rating: 4.9, reviews: 52,
+    price: 62, verified: true, online: true,
+    img: "https://randomuser.me/api/portraits/women/82.jpg",
+    exp: "14 years · World Class Guard", tags: ["World Class","Silk Work","Weapon Technique","Choreography"],
+    bio: "World Class guard veteran with 14 years of performance and 6 years of instruction. I specialize in silk work, weapon technique, and helping students reach world-class competitive programs.",
+    slots: [{day:"Mon",time:"6:30 PM",dur:"60 min"},{day:"Wed",time:"6:30 PM",dur:"60 min"},{day:"Fri",time:"3:00 PM",dur:"60 min",booked:true},{day:"Sun",time:"3:00 PM",dur:"90 min"}]
+  },
+  {
+    name: "Deon Mitchell", instrument: "Snare Drum", city: "Richmond", rating: 4.6, reviews: 20,
+    price: 45, verified: false, online: false,
+    img: "https://randomuser.me/api/portraits/men/41.jpg",
+    exp: "6 years · Battery Instructor", tags: ["Street Beat","Cadences","Showmanship","Fundamentals"],
+    bio: "Community college battery instructor passionate about HBCU-style drumming tradition, showmanship, and cadence work. I coach students on bringing energy and soul to their performance.",
+    slots: [{day:"Tue",time:"4:30 PM",dur:"60 min"},{day:"Thu",time:"4:30 PM",dur:"60 min"},{day:"Sat",time:"9:30 AM",dur:"60 min"},{day:"Sun",time:"12:00 PM",dur:"60 min"}]
+  }
+];
+
+let verifiedOnly = false, onlineOnly = false, currentInstructor = null, selectedSlot = null;
+
+function renderStars(r) {
+  let s = '';
+  for (let i=1;i<=5;i++) s += i <= Math.round(r) ? '★' : '☆';
+  return s;
+}
+
+function buildCard(inst) {
+  const vBadge = inst.verified
+    ? `<div class="card-verify"><svg viewBox="0 0 12 12"><path d="M6 0l1.5 2.5L11 2l-1.5 3L11 8l-3.5-.5L6 11l-1.5-2.5L1 8l1.5-3L1 2l3.5.5z"/></svg>Verified Pro</div>`
+    : `<div class="card-unverified">Unverified</div>`;
+  const onlineBadge = inst.online
+    ? `<div class="card-online-badge"><div class="online-dot"></div>Online</div>` : '';
+  const tags = inst.tags.slice(0,3).map(t=>`<div class="tag">${t}</div>`).join('');
+  return `
+    <div class="instructor-card" onclick="openModal(${INSTRUCTORS.indexOf(inst)})">
+      <div class="card-img-wrapper">
+        <img src="${inst.img}" alt="${inst.name}" loading="lazy">
+        <div class="card-instrument-badge">🎵 ${inst.instrument}</div>
+        ${onlineBadge}
+      </div>
+      <div class="card-body">
+        <div class="card-top-row">
+          <div class="card-name">${inst.name}</div>
+          ${vBadge}
+        </div>
+        <div class="card-location">📍 ${inst.city}</div>
+        <div class="card-rating-row">
+          <div class="stars">${renderStars(inst.rating)}</div>
+          <div class="rating-num">${inst.rating.toFixed(1)}</div>
+          <div class="review-count">(${inst.reviews} reviews)</div>
+        </div>
+        <div class="card-tags">${tags}</div>
+        <div class="card-bottom-row">
+          <div class="card-price">$${inst.price} <span>/hr</span></div>
+          <button class="card-book-btn" onclick="event.stopPropagation();openModal(${INSTRUCTORS.indexOf(inst)},true)">Book Now</button>
+        </div>
+      </div>
+    </div>`;
+}
+
+function filterInstructors() {
+  const instr = document.getElementById('instrFilter').value;
+  const price = document.getElementById('priceFilter').value;
+  let results = INSTRUCTORS.filter(i => {
+    if (verifiedOnly && !i.verified) return false;
+    if (onlineOnly && !i.online) return false;
+    if (instr && i.instrument !== instr) return false;
+    if (price === 'Under $40/hr' && i.price >= 40) return false;
+    if (price === '$40–$60/hr' && (i.price < 40 || i.price > 60)) return false;
+    if (price === '$60+/hr' && i.price < 60) return false;
+    return true;
+  });
+  document.getElementById('resultCount').textContent = results.length;
+  document.getElementById('instructorGrid').innerHTML = results.map(buildCard).join('');
+}
+
+function toggleVerified() {
+  verifiedOnly = !verifiedOnly;
+  document.getElementById('verifiedToggle').classList.toggle('active', verifiedOnly);
+  filterInstructors();
+}
+function toggleOnline() {
+  onlineOnly = !onlineOnly;
+  document.getElementById('onlineToggle').classList.toggle('active', onlineOnly);
+  filterInstructors();
+}
+
+function openModal(idx, goBook=false) {
+  currentInstructor = INSTRUCTORS[idx];
+  const i = currentInstructor;
+  document.getElementById('modalImg').src = i.img;
+  document.getElementById('modalName').textContent = i.name;
+  document.getElementById('modalInst').textContent = `🎵 ${i.instrument}`;
+  document.getElementById('modalLoc').textContent = `📍 ${i.city}`;
+  document.getElementById('modalStars').textContent = renderStars(i.rating) + ` ${i.rating.toFixed(1)} (${i.reviews} reviews)`;
+  document.getElementById('modalVerifyBadge').innerHTML = i.verified
+    ? `<div class="card-verify" style="display:inline-flex;"><svg viewBox="0 0 12 12" style="width:12px;height:12px;fill:var(--gold)"><path d="M6 0l1.5 2.5L11 2l-1.5 3L11 8l-3.5-.5L6 11l-1.5-2.5L1 8l1.5-3L1 2l3.5.5z"/></svg>Verified Pro</div>`
+    : `<div class="card-unverified">Unverified</div>`;
+  document.getElementById('modalBio').textContent = i.bio;
+  document.getElementById('modalExp').textContent = i.exp;
+  document.getElementById('modalCity').textContent = i.city + ', Bay Area';
+  document.getElementById('modalRate').textContent = `$${i.price}/hr`;
+  document.getElementById('modalOnline').textContent = i.online ? '✅ Available' : '❌ In-Person Only';
+  document.getElementById('modalTags').innerHTML = i.tags.map(t=>`<div class="tag">${t}</div>`).join('');
+  document.getElementById('bookingPrice').textContent = `$${i.price}`;
+  document.getElementById('msgIntro').textContent = `Hi! I'm ${i.name}. Happy to answer questions about my lessons or availability. What instrument and level are you working on?`;
+  buildTimeSlots(i.slots);
+  document.getElementById('modalOverlay').classList.add('open');
+  if (goBook) switchTab('book'); else switchTab('about');
+}
+
+function buildTimeSlots(slots) {
+  document.getElementById('timeSlotGrid').innerHTML = slots.map((s,idx)=>`
+    <div class="time-slot${s.booked?' booked':''}" onclick="${s.booked?'':' selectSlot('+idx+')'}" data-idx="${idx}">
+      <div class="ts-day">${s.day}</div>
+      <div class="ts-time">${s.time}</div>
+      <div class="ts-dur">${s.dur}</div>
+      ${s.booked?'<div style="font-size:10px;color:var(--gray-400);margin-top:3px;">Booked</div>':''}
+    </div>`).join('');
+}
+
+function selectSlot(idx) {
+  selectedSlot = idx;
+  document.querySelectorAll('.time-slot:not(.booked)').forEach((el,i)=>{
+    el.classList.toggle('selected', i === idx);
+  });
+}
+
+function switchTab(name) {
+  document.querySelectorAll('.modal-tab').forEach((t,i)=>{
+    const tabs = ['about','schedule','book','message'];
+    t.classList.toggle('active', tabs[i] === name);
+  });
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.getElementById(`tab-${name}`).classList.add('active');
+}
+
+function closeModal() { document.getElementById('modalOverlay').classList.remove('open'); }
+function closeModalIfBg(e) { if(e.target===document.getElementById('modalOverlay')) closeModal(); }
+
+function selectPay(el) {
+  document.querySelectorAll('.pay-option').forEach(p=>p.classList.remove('selected'));
+  el.classList.add('selected');
+}
+
+function confirmBooking() {
+  closeModal();
+  showToast('🎺 Booking confirmed! Check your email for details.');
+}
+
+function sendMsg() {
+  const inp = document.getElementById('msgInput');
+  const val = inp.value.trim();
+  if (!val) return;
+  const thread = document.getElementById('msgThread');
+  const msg = document.createElement('div');
+  msg.className = 'msg me';
+  msg.innerHTML = `<div class="msg-bubble">${val}</div><div class="msg-time">Just now</div>`;
+  thread.appendChild(msg);
+  inp.value = '';
+  thread.scrollTop = thread.scrollHeight;
+  setTimeout(()=>{
+    const reply = document.createElement('div');
+    reply.className = 'msg them';
+    reply.innerHTML = `<div class="msg-bubble">Thanks for reaching out! I'll get back to you shortly. Feel free to check my available slots in the Schedule tab.</div><div class="msg-time">Just now</div>`;
+    thread.appendChild(reply);
+    thread.scrollTop = thread.scrollHeight;
+  }, 1200);
+}
+
+function openTutorSignup() { document.getElementById('tutorModal').classList.add('open'); }
+function closeTutorIfBg(e) { if(e.target===document.getElementById('tutorModal')) document.getElementById('tutorModal').classList.remove('open'); }
+function submitTutor() {
+  document.getElementById('tutorModal').classList.remove('open');
+  showToast('✅ Application submitted! We\'ll review and be in touch.');
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'), 3200);
+}
+
+// Init
+filterInstructors();
+</script>
+</body>
+</html>
