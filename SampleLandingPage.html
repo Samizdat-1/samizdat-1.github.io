@@ -1,0 +1,847 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EarthlyNot — Wear Your Roots</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --gold: #C9A84C;
+    --gold-light: #E8C97A;
+    --gold-pale: #F5EDD6;
+    --ink: #0E0B07;
+    --ink-2: #1C1812;
+    --ink-3: #2C2720;
+    --smoke: #F0EBE1;
+    --smoke-2: #E6DDD0;
+    --text-muted: #7A6F62;
+    --text-body: #3D352C;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--ink);
+    color: var(--smoke);
+    overflow-x: hidden;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 1.2rem 3rem;
+    background: rgba(14,11,7,0.85);
+    backdrop-filter: blur(12px);
+    border-bottom: 0.5px solid rgba(201,168,76,0.25);
+  }
+  .nav-logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.35rem;
+    font-weight: 900;
+    letter-spacing: 0.04em;
+    color: var(--gold);
+    text-decoration: none;
+  }
+  .nav-logo span { color: var(--smoke); }
+  nav ul {
+    display: flex; gap: 2.5rem; list-style: none;
+    font-size: 0.8rem; letter-spacing: 0.12em; text-transform: uppercase;
+    font-weight: 500; color: var(--smoke-2);
+  }
+  nav ul a { color: inherit; text-decoration: none; transition: color 0.2s; }
+  nav ul a:hover { color: var(--gold); }
+  .nav-cta {
+    font-size: 0.75rem; letter-spacing: 0.12em; text-transform: uppercase;
+    font-weight: 600; padding: 0.6rem 1.6rem;
+    border: 1px solid var(--gold); color: var(--gold);
+    background: transparent; cursor: pointer; transition: all 0.25s;
+    font-family: 'DM Sans', sans-serif;
+  }
+  .nav-cta:hover { background: var(--gold); color: var(--ink); }
+
+  /* ── HERO ── */
+  .hero {
+    min-height: 100vh;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero-left {
+    display: flex; flex-direction: column; justify-content: flex-end;
+    padding: 8rem 4rem 5rem 3rem;
+    position: relative; z-index: 2;
+  }
+  .hero-eyebrow {
+    font-size: 0.7rem; letter-spacing: 0.25em; text-transform: uppercase;
+    color: var(--gold); font-weight: 500; margin-bottom: 1.5rem;
+    display: flex; align-items: center; gap: 0.75rem;
+  }
+  .hero-eyebrow::before {
+    content: ''; width: 2.5rem; height: 1px; background: var(--gold);
+  }
+  .hero-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(3.5rem, 6vw, 5.5rem);
+    line-height: 1.0;
+    font-weight: 900;
+    margin-bottom: 1.5rem;
+    letter-spacing: -0.01em;
+  }
+  .hero-title em {
+    font-style: italic;
+    color: var(--gold);
+    display: block;
+  }
+  .hero-sub {
+    font-size: 1rem; line-height: 1.7; color: var(--text-muted);
+    max-width: 38ch; margin-bottom: 3rem;
+    font-weight: 300;
+  }
+  .hero-sub strong { color: var(--smoke); font-weight: 500; }
+  .hero-actions { display: flex; gap: 1rem; align-items: center; }
+  .btn-primary {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.78rem; letter-spacing: 0.14em; text-transform: uppercase;
+    font-weight: 600; padding: 1rem 2.5rem;
+    background: var(--gold); color: var(--ink);
+    border: none; cursor: pointer; transition: all 0.25s;
+  }
+  .btn-primary:hover { background: var(--gold-light); transform: translateY(-1px); }
+  .btn-ghost {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.78rem; letter-spacing: 0.14em; text-transform: uppercase;
+    font-weight: 600; padding: 1rem 2.5rem;
+    background: transparent; color: var(--smoke);
+    border: 1px solid rgba(240,235,225,0.3); cursor: pointer; transition: all 0.25s;
+  }
+  .btn-ghost:hover { border-color: var(--smoke); }
+
+  .hero-right {
+    position: relative; overflow: hidden;
+  }
+  .hero-right img {
+    width: 100%; height: 100%; object-fit: cover;
+    object-position: center top;
+    filter: brightness(0.85) contrast(1.05);
+  }
+  .hero-right::after {
+    content: '';
+    position: absolute; inset: 0;
+    background: linear-gradient(to right, var(--ink) 0%, transparent 35%),
+                linear-gradient(to top, var(--ink) 0%, transparent 30%);
+  }
+  .hero-tag {
+    position: absolute; bottom: 3rem; right: 3rem; z-index: 10;
+    border: 1px solid rgba(201,168,76,0.5);
+    padding: 1.2rem 1.5rem;
+    background: rgba(14,11,7,0.7);
+    backdrop-filter: blur(8px);
+    text-align: center;
+  }
+  .hero-tag .tag-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 2rem; font-weight: 900; color: var(--gold);
+    line-height: 1;
+  }
+  .hero-tag .tag-label {
+    font-size: 0.65rem; letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--text-muted); margin-top: 0.25rem;
+  }
+
+  .scroll-hint {
+    position: absolute; bottom: 2.5rem; left: 3rem;
+    display: flex; align-items: center; gap: 0.75rem;
+    font-size: 0.65rem; letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--text-muted); z-index: 3;
+  }
+  .scroll-hint::before {
+    content: ''; width: 1px; height: 2rem; background: var(--text-muted);
+    animation: scrollPulse 2s ease-in-out infinite;
+  }
+  @keyframes scrollPulse {
+    0%, 100% { opacity: 1; transform: scaleY(1); }
+    50% { opacity: 0.3; transform: scaleY(0.5); }
+  }
+
+  /* ── MARQUEE ── */
+  .marquee-wrap {
+    overflow: hidden;
+    border-top: 1px solid rgba(201,168,76,0.2);
+    border-bottom: 1px solid rgba(201,168,76,0.2);
+    padding: 0.9rem 0;
+    background: var(--ink-2);
+  }
+  .marquee-track {
+    display: flex; gap: 4rem;
+    width: max-content;
+    animation: marquee 24s linear infinite;
+    font-size: 0.65rem; letter-spacing: 0.25em; text-transform: uppercase;
+    color: var(--gold); font-weight: 500;
+  }
+  .marquee-track span::before { content: '✦ '; opacity: 0.5; }
+  @keyframes marquee {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+  }
+
+  /* ── FEATURED PRODUCTS ── */
+  .section { padding: 6rem 3rem; }
+  .section-header {
+    display: flex; align-items: flex-end; justify-content: space-between;
+    margin-bottom: 3.5rem;
+  }
+  .section-eyebrow {
+    font-size: 0.65rem; letter-spacing: 0.25em; text-transform: uppercase;
+    color: var(--gold); font-weight: 500; margin-bottom: 0.75rem;
+  }
+  .section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2rem, 3.5vw, 2.8rem);
+    font-weight: 900; line-height: 1.1;
+  }
+  .section-title em { font-style: italic; color: var(--gold); }
+  .view-all {
+    font-size: 0.7rem; letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--gold); text-decoration: none; font-weight: 500;
+    display: flex; align-items: center; gap: 0.5rem;
+    transition: gap 0.2s;
+  }
+  .view-all:hover { gap: 0.9rem; }
+  .view-all::after { content: '→'; }
+
+  .product-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5px;
+  }
+  .product-card {
+    position: relative; overflow: hidden; cursor: pointer;
+    aspect-ratio: 3/4; background: var(--ink-2);
+  }
+  .product-card:first-child {
+    grid-row: span 2; aspect-ratio: auto;
+  }
+  .product-card img {
+    width: 100%; height: 100%; object-fit: cover;
+    transition: transform 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    filter: brightness(0.8);
+  }
+  .product-card:hover img { transform: scale(1.04); }
+  .product-card-overlay {
+    position: absolute; inset: 0;
+    background: linear-gradient(to top, rgba(14,11,7,0.9) 0%, transparent 55%);
+    display: flex; flex-direction: column; justify-content: flex-end;
+    padding: 2rem;
+  }
+  .product-badge {
+    display: inline-block; margin-bottom: 0.75rem;
+    font-size: 0.6rem; letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--gold); font-weight: 600;
+    border: 1px solid rgba(201,168,76,0.4); padding: 0.2rem 0.6rem;
+    width: fit-content;
+  }
+  .product-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.3rem; font-weight: 700; line-height: 1.2;
+    margin-bottom: 0.4rem;
+  }
+  .product-price {
+    font-size: 0.85rem; color: var(--gold-light); font-weight: 500;
+  }
+  .product-card:first-child .product-name { font-size: 1.8rem; }
+
+  /* ── CULTURAL STRIPS ── */
+  .culture-section {
+    padding: 5rem 3rem;
+    background: var(--ink-2);
+  }
+  .culture-grid {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 2px;
+    margin-top: 3rem;
+  }
+  .culture-item {
+    position: relative; padding: 2.5rem 2rem;
+    border: 0.5px solid rgba(201,168,76,0.1);
+    transition: border-color 0.3s, background 0.3s;
+    cursor: pointer;
+  }
+  .culture-item:hover {
+    border-color: rgba(201,168,76,0.4);
+    background: rgba(201,168,76,0.04);
+  }
+  .culture-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 3.5rem; font-weight: 900; line-height: 1;
+    color: rgba(201,168,76,0.12); margin-bottom: 1rem;
+    letter-spacing: -0.03em;
+  }
+  .culture-title {
+    font-size: 0.85rem; font-weight: 600; letter-spacing: 0.05em;
+    text-transform: uppercase; color: var(--smoke); margin-bottom: 0.5rem;
+  }
+  .culture-desc {
+    font-size: 0.82rem; line-height: 1.6; color: var(--text-muted); font-weight: 300;
+  }
+
+  /* ── FEATURED IMAGE STRIP ── */
+  .featured-strip {
+    display: grid; grid-template-columns: 1fr 1.2fr 1fr;
+    height: 560px;
+    gap: 1.5px;
+  }
+  .strip-img { overflow: hidden; position: relative; }
+  .strip-img img {
+    width: 100%; height: 100%; object-fit: cover;
+    object-position: center top;
+    transition: transform 0.8s ease;
+    filter: brightness(0.75) saturate(0.9);
+  }
+  .strip-img:hover img { transform: scale(1.05); }
+  .strip-label {
+    position: absolute; bottom: 1.5rem; left: 1.5rem;
+    font-size: 0.65rem; letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--gold); font-weight: 500;
+    background: rgba(14,11,7,0.7);
+    backdrop-filter: blur(6px);
+    padding: 0.4rem 0.8rem;
+  }
+  .strip-center {
+    display: flex; align-items: flex-end;
+    padding: 3rem;
+    background: var(--gold);
+    color: var(--ink);
+  }
+  .strip-center-content .strip-quote {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.9rem; font-weight: 900; line-height: 1.15;
+    margin-bottom: 1.5rem; letter-spacing: -0.01em;
+  }
+  .strip-center-content .strip-quote em { font-style: italic; }
+  .strip-center-content p {
+    font-size: 0.8rem; line-height: 1.6; color: rgba(14,11,7,0.7);
+    font-weight: 400; margin-bottom: 1.5rem; max-width: 30ch;
+  }
+  .btn-dark {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.72rem; letter-spacing: 0.14em; text-transform: uppercase;
+    font-weight: 700; padding: 0.85rem 2rem;
+    background: var(--ink); color: var(--gold);
+    border: none; cursor: pointer; transition: all 0.25s;
+    display: inline-block;
+  }
+  .btn-dark:hover { background: var(--ink-3); }
+
+  /* ── SOCIAL PROOF ── */
+  .proof-section {
+    padding: 5rem 3rem;
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 5rem;
+    align-items: center;
+  }
+  .proof-left .big-stat {
+    font-family: 'Playfair Display', serif;
+    font-size: 6rem; font-weight: 900; color: var(--gold);
+    line-height: 1; letter-spacing: -0.03em;
+  }
+  .proof-left .stat-label {
+    font-size: 0.75rem; letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--text-muted); margin-top: 0.5rem; font-weight: 500;
+  }
+  .proof-left .proof-text {
+    margin-top: 2rem; font-size: 1rem; line-height: 1.8;
+    color: var(--text-muted); font-weight: 300; max-width: 45ch;
+  }
+  .proof-left .proof-text strong { color: var(--smoke); font-weight: 500; }
+  .reviews-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;
+  }
+  .review-card {
+    padding: 1.5rem;
+    border: 0.5px solid rgba(201,168,76,0.2);
+    background: var(--ink-2);
+    transition: border-color 0.3s;
+  }
+  .review-card:hover { border-color: rgba(201,168,76,0.5); }
+  .review-stars { color: var(--gold); font-size: 0.75rem; margin-bottom: 0.75rem; }
+  .review-text {
+    font-size: 0.82rem; line-height: 1.6; color: var(--smoke-2);
+    margin-bottom: 1rem; font-weight: 300; font-style: italic;
+  }
+  .review-name {
+    font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--text-muted); font-weight: 600;
+  }
+
+  /* ── NEWSLETTER ── */
+  .newsletter {
+    padding: 5rem 3rem;
+    background: var(--gold);
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 3rem;
+  }
+  .nl-left .nl-eyebrow {
+    font-size: 0.65rem; letter-spacing: 0.25em; text-transform: uppercase;
+    color: rgba(14,11,7,0.5); font-weight: 600; margin-bottom: 0.75rem;
+  }
+  .nl-left h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.5rem; font-weight: 900; color: var(--ink);
+    line-height: 1.15;
+  }
+  .nl-left h2 em { font-style: italic; }
+  .nl-form { display: flex; gap: 0; flex: 1; max-width: 500px; }
+  .nl-input {
+    flex: 1; padding: 1rem 1.5rem;
+    border: none; background: rgba(14,11,7,0.1);
+    font-family: 'DM Sans', sans-serif; font-size: 0.85rem;
+    color: var(--ink); outline: none;
+  }
+  .nl-input::placeholder { color: rgba(14,11,7,0.45); }
+  .nl-submit {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.72rem; letter-spacing: 0.15em; text-transform: uppercase;
+    font-weight: 700; padding: 1rem 1.8rem;
+    background: var(--ink); color: var(--gold);
+    border: none; cursor: pointer; transition: background 0.2s;
+    white-space: nowrap;
+  }
+  .nl-submit:hover { background: var(--ink-3); }
+
+  /* ── FOOTER ── */
+  footer {
+    padding: 4rem 3rem 2rem;
+    background: var(--ink);
+    border-top: 0.5px solid rgba(201,168,76,0.15);
+  }
+  .footer-top {
+    display: grid; grid-template-columns: 1.5fr 1fr 1fr 1fr;
+    gap: 3rem; margin-bottom: 4rem;
+  }
+  .footer-brand .logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.5rem; font-weight: 900; color: var(--gold);
+    margin-bottom: 1rem; display: block;
+  }
+  .footer-brand .logo span { color: var(--smoke); }
+  .footer-brand p {
+    font-size: 0.82rem; line-height: 1.7; color: var(--text-muted);
+    font-weight: 300; max-width: 30ch;
+  }
+  .footer-col h4 {
+    font-size: 0.65rem; letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--gold); font-weight: 600; margin-bottom: 1.25rem;
+  }
+  .footer-col ul { list-style: none; }
+  .footer-col ul li { margin-bottom: 0.6rem; }
+  .footer-col ul a {
+    font-size: 0.82rem; color: var(--text-muted); text-decoration: none;
+    font-weight: 300; transition: color 0.2s;
+  }
+  .footer-col ul a:hover { color: var(--smoke); }
+  .footer-bottom {
+    display: flex; justify-content: space-between; align-items: center;
+    padding-top: 2rem;
+    border-top: 0.5px solid rgba(201,168,76,0.1);
+    font-size: 0.72rem; color: var(--text-muted); font-weight: 300;
+  }
+
+  /* ── CUSTOM CURSOR ── */
+  body { cursor: none; }
+  .cursor {
+    width: 10px; height: 10px; border-radius: 50%;
+    background: var(--gold); position: fixed; pointer-events: none;
+    z-index: 9999; transform: translate(-50%, -50%);
+    transition: transform 0.1s;
+  }
+  .cursor-ring {
+    width: 36px; height: 36px; border-radius: 50%;
+    border: 1px solid rgba(201,168,76,0.5);
+    position: fixed; pointer-events: none; z-index: 9998;
+    transform: translate(-50%, -50%);
+    transition: left 0.12s ease, top 0.12s ease, width 0.3s, height 0.3s;
+  }
+  a, button, .product-card, .culture-item { cursor: none; }
+
+  @media (max-width: 900px) {
+    body { cursor: auto; }
+    .cursor, .cursor-ring { display: none; }
+    a, button, .product-card, .culture-item { cursor: pointer; }
+    .hero { grid-template-columns: 1fr; min-height: auto; }
+    .hero-right { height: 60vw; }
+    .hero-left { padding: 7rem 2rem 3rem; }
+    nav { padding: 1rem 1.5rem; }
+    nav ul { display: none; }
+    .product-grid { grid-template-columns: 1fr 1fr; }
+    .product-card:first-child { grid-row: span 1; aspect-ratio: 3/4; }
+    .culture-grid { grid-template-columns: 1fr 1fr; }
+    .featured-strip { grid-template-columns: 1fr; height: auto; }
+    .strip-img { height: 50vw; }
+    .proof-section { grid-template-columns: 1fr; }
+    .newsletter { flex-direction: column; }
+    .nl-form { flex-direction: column; }
+    .footer-top { grid-template-columns: 1fr 1fr; }
+    .section { padding: 4rem 1.5rem; }
+  }
+</style>
+</head>
+<body>
+
+<div class="cursor" id="cur"></div>
+<div class="cursor-ring" id="curRing"></div>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="nav-logo">Earthly<span>Not</span></a>
+  <ul>
+    <li><a href="#collections">Collections</a></li>
+    <li><a href="#culture">Our Roots</a></li>
+    <li><a href="#about">About</a></li>
+    <li><a href="#custom">Customize</a></li>
+  </ul>
+  <button class="nav-cta">Shop Now</button>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-left">
+    <div class="hero-eyebrow">Customized Cultural Jewelry</div>
+    <h1 class="hero-title">
+      Wear<br>
+      <em>Your Roots.</em>
+      Own Your<br>Story.
+    </h1>
+    <p class="hero-sub">
+      Every culture has a language. Every person has a name.
+      <strong>We turn both into jewelry that lasts forever</strong> — 
+      crafted in real 18k gold, shipped to your door.
+    </p>
+    <div class="hero-actions">
+      <button class="btn-primary">Shop the Collection</button>
+      <button class="btn-ghost">Customize Yours</button>
+    </div>
+    <div class="scroll-hint">Scroll to explore</div>
+  </div>
+
+  <div class="hero-right">
+    <img 
+      src="https://nominalx.com/cdn/shop/files/WMNSCustomNameNecklaceSG_1800x1800_7ffd3fb0-c551-4727-8cf5-27d702c1239b.jpg?v=1777306456"
+      alt="Model wearing custom cultural name necklace"
+      loading="eager"
+    >
+    <div class="hero-tag">
+      <div class="tag-num">250K+</div>
+      <div class="tag-label">Customers Worldwide</div>
+    </div>
+  </div>
+</section>
+
+<!-- MARQUEE -->
+<div class="marquee-wrap">
+  <div class="marquee-track">
+    <span>Custom Name Necklaces</span>
+    <span>18K Gold Plated</span>
+    <span>Lifetime Warranty</span>
+    <span>Arabic · Urdu · Persian · English</span>
+    <span>Cultural Identity</span>
+    <span>Hypoallergenic Steel</span>
+    <span>Waterproof · Sweatproof</span>
+    <span>Made for You</span>
+    <span>Custom Name Necklaces</span>
+    <span>18K Gold Plated</span>
+    <span>Lifetime Warranty</span>
+    <span>Arabic · Urdu · Persian · English</span>
+    <span>Cultural Identity</span>
+    <span>Hypoallergenic Steel</span>
+    <span>Waterproof · Sweatproof</span>
+    <span>Made for You</span>
+  </div>
+</div>
+
+<!-- FEATURED PRODUCTS -->
+<section class="section" id="collections">
+  <div class="section-header">
+    <div>
+      <div class="section-eyebrow">The Collection</div>
+      <h2 class="section-title">Pieces That<br><em>Speak.</em></h2>
+    </div>
+    <a href="#" class="view-all">View All</a>
+  </div>
+
+  <div class="product-grid">
+    <!-- Large card -->
+    <div class="product-card">
+      <img 
+        src="https://nominalx.com/cdn/shop/files/WN-PAL-HTN-G.jpg?v=1762200571"
+        alt="Country map necklace worn by model"
+        loading="lazy"
+      >
+      <div class="product-card-overlay">
+        <div class="product-badge">Bestseller</div>
+        <div class="product-name">Country Map Necklace</div>
+        <div class="product-price">From $45</div>
+      </div>
+    </div>
+
+    <!-- Top right -->
+    <div class="product-card">
+      <img 
+        src="https://nominalx.com/cdn/shop/files/WN-AP-G.png?v=1762271661"
+        alt="Allah pendant necklace"
+        loading="lazy"
+      >
+      <div class="product-card-overlay">
+        <div class="product-badge">Statement</div>
+        <div class="product-name">Allah Pendant</div>
+        <div class="product-price">$50</div>
+      </div>
+    </div>
+
+    <!-- Middle right -->
+    <div class="product-card">
+      <img 
+        src="https://nominalx.com/cdn/shop/files/WMNSCustomNameNecklaceSG_1800x1800_7ffd3fb0-c551-4727-8cf5-27d702c1239b.jpg?v=1777306456"
+        alt="Custom name necklace in gold"
+        loading="lazy"
+      >
+      <div class="product-card-overlay">
+        <div class="product-badge">Most Loved</div>
+        <div class="product-name">Custom Name Necklace</div>
+        <div class="product-price">From $75</div>
+      </div>
+    </div>
+
+    <!-- Bottom left -->
+    <div class="product-card">
+      <img 
+        src="https://nominalx.com/cdn/shop/files/WN-PAL-HTN-G.jpg?v=1762200571"
+        alt="Cultural jewelry collection"
+        loading="lazy"
+        style="object-position: 30% center;"
+      >
+      <div class="product-card-overlay">
+        <div class="product-badge">New Drop</div>
+        <div class="product-name">Heritage Ring</div>
+        <div class="product-price">From $55</div>
+      </div>
+    </div>
+
+    <!-- Bottom right -->
+    <div class="product-card">
+      <img 
+        src="https://nominalx.com/cdn/shop/files/WN-AP-G.png?v=1762271661"
+        alt="Calligraphy pendant"
+        loading="lazy"
+        style="object-position: center 30%;"
+      >
+      <div class="product-card-overlay">
+        <div class="product-badge">Faith</div>
+        <div class="product-name">Quranic Verse</div>
+        <div class="product-price">From $48</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CULTURE SECTION -->
+<section class="culture-section" id="culture">
+  <div>
+    <div class="section-eyebrow">Why EarthlyNot</div>
+    <h2 class="section-title">Jewelry With<br><em>Soul.</em></h2>
+  </div>
+  <div class="culture-grid">
+    <div class="culture-item">
+      <div class="culture-num">01</div>
+      <div class="culture-title">Your Culture</div>
+      <div class="culture-desc">Arabic, Urdu, Farsi, Hindi, English — any script, any tongue, any word that carries your story.</div>
+    </div>
+    <div class="culture-item">
+      <div class="culture-num">02</div>
+      <div class="culture-title">Real Gold</div>
+      <div class="culture-desc">Four layers of 18K gold plating on pure stainless steel. No nickel. No brass. No shortcuts.</div>
+    </div>
+    <div class="culture-item">
+      <div class="culture-num">03</div>
+      <div class="culture-title">Forever Yours</div>
+      <div class="culture-desc">Lifetime warranty. Waterproof. Sweatproof. Built to be worn every single day without ever coming off.</div>
+    </div>
+    <div class="culture-item">
+      <div class="culture-num">04</div>
+      <div class="culture-title">100-Day Love It</div>
+      <div class="culture-desc">Not feeling it? Send it back within 100 days for a full refund. Full stop. No questions asked.</div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURED STRIP -->
+<div class="featured-strip" id="custom">
+  <div class="strip-img">
+    <img 
+      src="https://nominalx.com/cdn/shop/files/WN-PAL-HTN-G.jpg?v=1762200571"
+      alt="Cultural map pendant close up"
+      loading="lazy"
+    >
+    <div class="strip-label">Country Maps</div>
+  </div>
+
+  <div class="strip-center">
+    <div class="strip-center-content">
+      <div class="strip-quote">
+        <em>"Not just jewelry.</em><br>
+        A piece of where you're from."
+      </div>
+      <p>
+        Pick your homeland. Pick your language. Type your name or your faith.
+        We hand-craft every custom piece and ship it to you — made to outlive the trend.
+      </p>
+      <button class="btn-dark">Start Customizing →</button>
+    </div>
+  </div>
+
+  <div class="strip-img">
+    <img 
+      src="https://nominalx.com/cdn/shop/files/WMNSCustomNameNecklaceSG_1800x1800_7ffd3fb0-c551-4727-8cf5-27d702c1239b.jpg?v=1777306456"
+      alt="Model wearing custom name necklace"
+      loading="lazy"
+    >
+    <div class="strip-label">Custom Names</div>
+  </div>
+</div>
+
+<!-- SOCIAL PROOF -->
+<section class="proof-section" id="about">
+  <div class="proof-left">
+    <div class="big-stat">250K</div>
+    <div class="stat-label">Customers & Counting</div>
+    <p class="proof-text">
+      From Brooklyn to Beirut, London to Lahore — <strong>EarthlyNot pieces are worn by people who are proudly, unapologetically themselves</strong>. Culture isn't a costume. It's who you are.
+    </p>
+  </div>
+  <div class="reviews-grid">
+    <div class="review-card">
+      <div class="review-stars">★★★★★</div>
+      <p class="review-text">"I cried when I opened the box. My name in Arabic, exactly how my grandmother writes it."</p>
+      <div class="review-name">Layla M. — Chicago</div>
+    </div>
+    <div class="review-card">
+      <div class="review-stars">★★★★★</div>
+      <p class="review-text">"The Pakistan map pendant never leaves my neck. Quality is insane for the price."</p>
+      <div class="review-name">Zaid K. — Toronto</div>
+    </div>
+    <div class="review-card">
+      <div class="review-stars">★★★★★</div>
+      <p class="review-text">"Wore mine in the shower every day for a year. Not a single scratch. Lifetime warranty isn't a gimmick."</p>
+      <div class="review-name">Sara A. — London</div>
+    </div>
+    <div class="review-card">
+      <div class="review-stars">★★★★★</div>
+      <p class="review-text">"Best gift I've given. Got my sister a custom name in Farsi — she was speechless."</p>
+      <div class="review-name">Parisa H. — LA</div>
+    </div>
+  </div>
+</section>
+
+<!-- NEWSLETTER -->
+<div class="newsletter">
+  <div class="nl-left">
+    <div class="nl-eyebrow">Join the Family</div>
+    <h2>Be First.<br><em>Stay Golden.</em></h2>
+  </div>
+  <div class="nl-form">
+    <input type="email" class="nl-input" placeholder="your@email.com">
+    <button class="nl-submit">Subscribe</button>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-top">
+    <div class="footer-brand">
+      <span class="logo">Earthly<span>Not</span></span>
+      <p>Cultural jewelry for people who wear their roots with pride. Real gold. Real meaning. Lifetime warranty.</p>
+    </div>
+    <div class="footer-col">
+      <h4>Shop</h4>
+      <ul>
+        <li><a href="#">Name Necklaces</a></li>
+        <li><a href="#">Country Maps</a></li>
+        <li><a href="#">Calligraphy</a></li>
+        <li><a href="#">Chains</a></li>
+        <li><a href="#">Rings</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Help</h4>
+      <ul>
+        <li><a href="#">Track Order</a></li>
+        <li><a href="#">Returns & Exchanges</a></li>
+        <li><a href="#">Size Guide</a></li>
+        <li><a href="#">FAQ</a></li>
+        <li><a href="#">Contact Us</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Company</h4>
+      <ul>
+        <li><a href="#">Our Story</a></li>
+        <li><a href="#">Giving Back</a></li>
+        <li><a href="#">Press</a></li>
+        <li><a href="#">Wholesale</a></li>
+        <li><a href="#">Instagram</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <div>© 2025 EarthlyNot.com — All rights reserved.</div>
+    <div>Privacy · Terms · Accessibility</div>
+  </div>
+</footer>
+
+<script>
+  const cur = document.getElementById('cur');
+  const curRing = document.getElementById('curRing');
+  let mx = 0, my = 0, rx = 0, ry = 0;
+
+  document.addEventListener('mousemove', e => {
+    mx = e.clientX; my = e.clientY;
+    cur.style.left = mx + 'px';
+    cur.style.top = my + 'px';
+  });
+
+  function animRing() {
+    rx += (mx - rx) * 0.12;
+    ry += (my - ry) * 0.12;
+    curRing.style.left = rx + 'px';
+    curRing.style.top = ry + 'px';
+    requestAnimationFrame(animRing);
+  }
+  animRing();
+
+  document.querySelectorAll('a, button, .product-card, .culture-item').forEach(el => {
+    el.addEventListener('mouseenter', () => {
+      curRing.style.width = '56px';
+      curRing.style.height = '56px';
+      curRing.style.borderColor = 'rgba(201,168,76,0.8)';
+    });
+    el.addEventListener('mouseleave', () => {
+      curRing.style.width = '36px';
+      curRing.style.height = '36px';
+      curRing.style.borderColor = 'rgba(201,168,76,0.5)';
+    });
+  });
+
+  document.querySelectorAll('a[href^="#"]').forEach(a => {
+    a.addEventListener('click', e => {
+      e.preventDefault();
+      const t = document.querySelector(a.getAttribute('href'));
+      if (t) t.scrollIntoView({ behavior: 'smooth' });
+    });
+  });
+</script>
+</body>
+</html>
