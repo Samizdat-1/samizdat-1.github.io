@@ -1,0 +1,758 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Shortcut Atlas</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Cormorant+Garamond:wght@500;600&display=swap" rel="stylesheet">
+
+<style>
+:root {
+  --bg: #F5E6EC;
+  --accent: #C2607A;
+  --panel: rgba(255,255,255,0.72);
+  --key: rgba(255,255,255,0.82);
+  --text: #2d2d2d;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  overflow-x: auto;
+}
+
+body {
+  min-height: 100vh;
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Inter', sans-serif;
+  transition: background 0.6s ease;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background:
+    radial-gradient(circle at top left, rgba(255,255,255,0.5), transparent 30%),
+    radial-gradient(circle at bottom right, rgba(255,255,255,0.35), transparent 30%);
+  pointer-events: none;
+}
+
+.app-shell {
+  padding: 24px;
+}
+
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  margin-bottom: 30px;
+}
+
+.left-controls {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.flower-toggle {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(255,255,255,0.75);
+  backdrop-filter: blur(14px);
+  font-size: 30px;
+  color: var(--accent);
+  cursor: pointer;
+  box-shadow: 0 15px 35px rgba(0,0,0,0.08);
+  transition: all 0.35s ease;
+}
+
+.flower-toggle:hover {
+  transform: rotate(12deg) scale(1.05);
+}
+
+.mode-switcher {
+  display: flex;
+  gap: 10px;
+}
+
+.mode-btn {
+  border: none;
+  background: rgba(255,255,255,0.7);
+  border-radius: 999px;
+  padding: 10px 18px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.mode-btn.active {
+  background: var(--accent);
+  color: white;
+}
+
+.search-wrap input {
+  width: 260px;
+  border: none;
+  outline: none;
+  padding: 13px 18px;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.75);
+  box-shadow: 0 12px 30px rgba(0,0,0,0.06);
+  backdrop-filter: blur(14px);
+}
+
+.keyboard-wrapper {
+  overflow-x: auto;
+  padding-bottom: 12px;
+}
+
+#keyboard {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-width: 1250px;
+}
+
+.keyboard-row {
+  display: flex;
+  gap: 10px;
+}
+
+.key {
+  min-width: 58px;
+  height: 58px;
+  background: var(--key);
+  border-radius: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  user-select: none;
+  transition: all 0.2s ease;
+  box-shadow:
+    0 8px 22px rgba(0,0,0,0.06),
+    inset 0 1px 0 rgba(255,255,255,0.5);
+}
+
+.key:hover {
+  transform: translateY(-2px);
+}
+
+.key.active {
+  background: var(--accent);
+  color: white;
+  transform: scale(1.04);
+  box-shadow:
+    0 0 22px color-mix(in srgb, var(--accent) 60%, white),
+    0 15px 35px color-mix(in srgb, var(--accent) 35%, transparent);
+}
+
+.key.wide { min-width: 100px; }
+.key.xwide { min-width: 140px; }
+.key.space { min-width: 420px; }
+
+.results-panel {
+  margin-top: 28px;
+  background: var(--panel);
+  border-radius: 28px;
+  padding: 28px;
+  backdrop-filter: blur(18px);
+  box-shadow: 0 15px 40px rgba(0,0,0,0.07);
+}
+
+.combo-label {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  opacity: 0.5;
+}
+
+#activeCombo {
+  margin-top: 10px;
+  font-size: 36px;
+  font-family: 'Cormorant Garamond', serif;
+}
+
+.partial-matches {
+  margin-top: 18px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.partial-pill {
+  padding: 10px 14px;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.72);
+  font-size: 13px;
+}
+
+.results-grid {
+  margin-top: 28px;
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 24px;
+}
+
+h2 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 34px;
+  margin-top: 0;
+}
+
+.shortcut-card,
+.history-card {
+  position: relative;
+  background: rgba(255,255,255,0.72);
+  border-radius: 24px;
+  padding: 18px;
+  margin-bottom: 14px;
+}
+
+.shortcut-combo {
+  color: var(--accent);
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.shortcut-meta {
+  margin-top: 12px;
+  opacity: 0.7;
+  font-size: 13px;
+}
+
+.tooltip {
+  position: absolute;
+  right: 20px;
+  top: 20px;
+  width: 280px;
+  background: rgba(255,255,255,0.95);
+  border-radius: 20px;
+  padding: 18px;
+  opacity: 0;
+  transform: translateY(10px);
+  transition: all 0.25s ease;
+  pointer-events: none;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.08);
+}
+
+.shortcut-card:hover .tooltip {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.tooltip h4 {
+  margin-top: 0;
+}
+
+@media (max-width: 1100px) {
+  .results-grid {
+    grid-template-columns: 1fr;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<div class="app-shell">
+
+  <header class="topbar">
+
+    <div class="left-controls">
+      <button id="themeToggle" class="flower-toggle">✿</button>
+
+      <div class="mode-switcher">
+        <button class="mode-btn active" data-mode="windows">Windows</button>
+        <button class="mode-btn" data-mode="mac">MacBook</button>
+      </div>
+    </div>
+
+    <div class="search-wrap">
+      <input type="text" id="searchInput" placeholder="Search shortcuts..." />
+    </div>
+
+  </header>
+
+  <section class="keyboard-wrapper">
+    <div id="keyboard"></div>
+  </section>
+
+  <section class="results-panel">
+
+    <div class="combo-label">
+      Current Combination
+    </div>
+
+    <div id="activeCombo">—</div>
+
+    <div id="partialMatches" class="partial-matches"></div>
+
+    <div class="results-grid">
+
+      <div>
+        <h2>Shortcut Matches</h2>
+        <div id="shortcutCards"></div>
+      </div>
+
+      <div>
+        <h2>History</h2>
+        <div id="history"></div>
+      </div>
+
+    </div>
+
+  </section>
+
+</div>
+
+<script>
+const themes = [
+  { bg:'#F5E6EC', accent:'#C2607A', flower:'✿' },
+  { bg:'#E8F0E4', accent:'#5D8C52', flower:'❀' },
+  { bg:'#EEE8F5', accent:'#8262B8', flower:'✾' },
+  { bg:'#FBF0E2', accent:'#C07B30', flower:'❁' },
+  { bg:'#E4EDF8', accent:'#3A6EA8', flower:'✽' }
+];
+
+const SHORTCUTS = [
+{
+combo:'CTRL+SHIFT+ESC',
+description:'Opens Task Manager.',
+app:'Windows',
+category:'System',
+macEquivalent:'Activity Monitor',
+notes:'Fastest route into the machine’s pulse.',
+tags:['task manager','performance','system']
+},
+{
+combo:'CTRL+SHIFT+T',
+description:'Reopens closed tab.',
+app:'Browser',
+category:'Navigation',
+macEquivalent:'⌘ + Shift + T',
+notes:'Undo for regret.',
+tags:['tabs','browser']
+},
+{
+combo:'CTRL+ALT+SHIFT+H',
+description:'Displays revision history.',
+app:'Google Docs',
+category:'History',
+macEquivalent:'⌘ + Option + Shift + H',
+notes:'Time travel for documents.',
+tags:['history','docs','revision']
+},
+{
+combo:'CTRL+SHIFT+V',
+description:'Paste without formatting.',
+app:'Browser / Docs',
+category:'Clipboard',
+macEquivalent:'⌘ + Shift + V',
+notes:'Strips formatting from copied text.',
+tags:['paste','plain text']
+},
+{
+combo:'CTRL+H',
+description:'Replace text.',
+app:'Google Docs',
+category:'Editing',
+macEquivalent:'⌘ + Shift + H',
+notes:'Find-and-replace utility.',
+tags:['replace','editing']
+},
+{
+combo:'CTRL+ALT+DEL',
+description:'Security options screen.',
+app:'Windows',
+category:'System',
+macEquivalent:'N/A',
+notes:'The ancient gatekeeper.',
+tags:['security','windows']
+}
+];
+
+let themeIndex = 0;
+let mode = 'windows';
+
+const activeKeys = new Set();
+const historyLog = [];
+
+const keyboard = document.getElementById('keyboard');
+const activeCombo = document.getElementById('activeCombo');
+const shortcutCards = document.getElementById('shortcutCards');
+const partialMatches = document.getElementById('partialMatches');
+const history = document.getElementById('history');
+
+const windowsLayout = [
+['ESC','F1','F2','F3','F4','F5','F6','F7','F8','F9','F10','F11','F12'],
+['`','1','2','3','4','5','6','7','8','9','0','-','=','BACKSPACE'],
+['TAB','Q','W','E','R','T','Y','U','I','O','P','[',']','\\'],
+['CAPS','A','S','D','F','G','H','J','K','L',';',"'",'ENTER'],
+['SHIFT','Z','X','C','V','B','N','M',',','.','/','SHIFT'],
+['CTRL','WIN','ALT','SPACE','ALT','FN','MENU','CTRL']
+];
+
+const macLayout = [
+['ESC','F1','F2','F3','F4','F5','F6','F7','F8','F9','F10','F11','F12'],
+['`','1','2','3','4','5','6','7','8','9','0','-','=','DELETE'],
+['TAB','Q','W','E','R','T','Y','U','I','O','P','[',']','\\'],
+['CAPS','A','S','D','F','G','H','J','K','L',';',"'",'RETURN'],
+['SHIFT','Z','X','C','V','B','N','M',',','.','/','SHIFT'],
+['FN','⌃','⌥','⌘','SPACE','⌘','⌥']
+];
+
+function renderKeyboard() {
+  keyboard.innerHTML = '';
+
+  const layout = mode === 'windows'
+    ? windowsLayout
+    : macLayout;
+
+  layout.forEach(row => {
+
+    const rowEl = document.createElement('div');
+    rowEl.className = 'keyboard-row';
+
+    row.forEach(key => {
+
+      const keyEl = document.createElement('div');
+
+      keyEl.className = 'key';
+      keyEl.textContent = key;
+      keyEl.dataset.key = key;
+
+      if (
+        ['SHIFT','BACKSPACE','CAPS','ENTER','RETURN']
+        .includes(key)
+      ) {
+        keyEl.classList.add('wide');
+      }
+
+      if (key === 'SPACE') {
+        keyEl.classList.add('space');
+      }
+
+      keyEl.addEventListener('click', () => {
+        toggleKey(key);
+      });
+
+      rowEl.appendChild(keyEl);
+
+    });
+
+    keyboard.appendChild(rowEl);
+
+  });
+}
+
+function normalizeKey(key) {
+
+  const aliases = {
+    CONTROL:'CTRL',
+    COMMAND:'⌘'
+  };
+
+  return aliases[key] || key.toUpperCase();
+
+}
+
+function sortedCombo() {
+
+  const order = [
+    'CTRL',
+    '⌃',
+    'ALT',
+    '⌥',
+    'SHIFT',
+    '⌘',
+    'WIN'
+  ];
+
+  return [...activeKeys]
+  .sort((a,b) => {
+
+    const ai = order.indexOf(a);
+    const bi = order.indexOf(b);
+
+    return (ai === -1 ? 999 : ai)
+    - (bi === -1 ? 999 : bi);
+
+  })
+  .join('+');
+
+}
+
+function toggleKey(key) {
+
+  const normalized = normalizeKey(key);
+
+  if (activeKeys.has(normalized)) {
+    activeKeys.delete(normalized);
+  } else {
+    activeKeys.add(normalized);
+    playClick();
+  }
+
+  updateUI();
+
+}
+
+function updateUI() {
+
+  document.querySelectorAll('.key')
+  .forEach(el => {
+
+    el.classList.toggle(
+      'active',
+      activeKeys.has(
+        normalizeKey(el.dataset.key)
+      )
+    );
+
+  });
+
+  const combo = sortedCombo();
+
+  activeCombo.textContent = combo || '—';
+
+  const matches = SHORTCUTS.filter(
+    s => s.combo === combo
+  );
+
+  const partial = SHORTCUTS.filter(
+    s => s.combo.startsWith(combo)
+    && s.combo !== combo
+  );
+
+  renderMatches(matches);
+  renderPartial(partial);
+
+  if (matches.length) {
+    historyLog.unshift(matches[0]);
+    renderHistory();
+  }
+
+}
+
+function renderMatches(matches) {
+
+  shortcutCards.innerHTML = '';
+
+  matches.forEach(item => {
+
+    const card = document.createElement('div');
+
+    card.className = 'shortcut-card';
+
+    card.innerHTML = `
+      <div class="shortcut-combo">
+        ${item.combo}
+      </div>
+
+      <div>
+        ${item.description}
+        <strong>(${item.app})</strong>
+      </div>
+
+      <div class="shortcut-meta">
+        ${item.category}
+      </div>
+
+      <div class="tooltip">
+
+        <h4>${item.combo}</h4>
+
+        <p>
+          <strong>App:</strong>
+          ${item.app}
+        </p>
+
+        <p>
+          <strong>Category:</strong>
+          ${item.category}
+        </p>
+
+        <p>
+          <strong>macOS Equivalent:</strong>
+          ${item.macEquivalent}
+        </p>
+
+        <p>
+          <strong>Notes:</strong>
+          ${item.notes}
+        </p>
+
+      </div>
+    `;
+
+    shortcutCards.appendChild(card);
+
+  });
+
+}
+
+function renderPartial(partial) {
+
+  partialMatches.innerHTML = '';
+
+  partial.slice(0,6).forEach(item => {
+
+    const pill = document.createElement('div');
+
+    pill.className = 'partial-pill';
+    pill.textContent = item.combo;
+
+    partialMatches.appendChild(pill);
+
+  });
+
+}
+
+function renderHistory() {
+
+  history.innerHTML = '';
+
+  historyLog.slice(0,8).forEach(item => {
+
+    const card = document.createElement('div');
+
+    card.className = 'history-card';
+
+    card.innerHTML = `
+      <div class="shortcut-combo">
+        ${item.combo}
+      </div>
+
+      <div>
+        ${item.description}
+      </div>
+    `;
+
+    history.appendChild(card);
+
+  });
+
+}
+
+function playClick() {
+
+  const audio = new Audio(
+    'https://cdn.pixabay.com/download/audio/2022/03/15/audio_c8c8a73467.mp3?filename=keyboard-typing-5997.mp3'
+  );
+
+  audio.volume = 0.15;
+  audio.playbackRate =
+    0.96 + Math.random() * 0.08;
+
+  audio.play();
+
+}
+
+function applyTheme(index) {
+
+  const t = themes[index];
+
+  document.documentElement
+  .style
+  .setProperty('--bg', t.bg);
+
+  document.documentElement
+  .style
+  .setProperty('--accent', t.accent);
+
+  document
+  .getElementById('themeToggle')
+  .textContent = t.flower;
+
+}
+
+document
+.getElementById('themeToggle')
+.addEventListener('click', () => {
+
+  themeIndex =
+    (themeIndex + 1)
+    % themes.length;
+
+  applyTheme(themeIndex);
+
+});
+
+document
+.querySelectorAll('.mode-btn')
+.forEach(btn => {
+
+  btn.addEventListener('click', () => {
+
+    document
+    .querySelectorAll('.mode-btn')
+    .forEach(b => b.classList.remove('active'));
+
+    btn.classList.add('active');
+
+    mode = btn.dataset.mode;
+
+    activeKeys.clear();
+
+    renderKeyboard();
+    updateUI();
+
+  });
+
+});
+
+window.addEventListener('keydown', e => {
+
+  e.preventDefault();
+
+  toggleKey(e.key);
+
+});
+
+document
+.getElementById('searchInput')
+.addEventListener('input', e => {
+
+  const query =
+    e.target.value.toLowerCase();
+
+  if (!query) {
+    shortcutCards.innerHTML = '';
+    return;
+  }
+
+  const results = SHORTCUTS.filter(s => {
+
+    return (
+      s.description.toLowerCase().includes(query)
+      || s.tags.some(
+        tag => tag.includes(query)
+      )
+      || s.combo.toLowerCase().includes(query)
+    );
+
+  });
+
+  renderMatches(results);
+
+});
+
+applyTheme(0);
+renderKeyboard();
+</script>
+
+</body>
+</html>
