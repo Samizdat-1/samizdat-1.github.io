@@ -1,0 +1,1345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Atlas — Keyboard Shortcut Explorer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Manrope:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════════════════════════════════════
+   RESET & ROOT
+═══════════════════════════════════════════════════ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #F5E6EC;
+  --bg2: #f0dce4;
+  --accent: #C2607A;
+  --accent-dim: rgba(194,96,122,0.18);
+  --accent-glow: rgba(194,96,122,0.28);
+  --accent-deep: #9a3d56;
+  --key-face: #ffffff;
+  --key-face2: #f7f3f4;
+  --key-border: rgba(0,0,0,0.09);
+  --key-shadow-a: rgba(0,0,0,0.14);
+  --key-shadow-b: rgba(0,0,0,0.07);
+  --key-text: #2c2426;
+  --key-sub: #9a8e90;
+  --panel: rgba(255,255,255,0.52);
+  --panel-border: rgba(255,255,255,0.78);
+  --text-primary: #1e1618;
+  --text-secondary: #6b5558;
+  --text-muted: #a08688;
+  --trans: 0.38s cubic-bezier(0.4,0,0.2,1);
+  --trans-fast: 0.16s cubic-bezier(0.4,0,0.2,1);
+}
+
+html { font-size: 14px; }
+
+body {
+  font-family: 'Manrope', sans-serif;
+  background: var(--bg);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px 20px 36px;
+  transition: background var(--trans);
+  overflow-x: hidden;
+  cursor: default;
+}
+
+/* grain overlay */
+body::before {
+  content: '';
+  position: fixed; inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
+  pointer-events: none; z-index: 0; opacity: 0.6;
+}
+
+/* ═══════════════════════════════════════════════════
+   TOP BAR
+═══════════════════════════════════════════════════ */
+.topbar {
+  width: 100%; max-width: 1200px;
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 16px;
+  position: relative; z-index: 10;
+}
+
+/* ── Flower button ── */
+.flower-wrap {
+  display: flex; align-items: center; gap: 10px;
+}
+
+.flower-btn {
+  width: 52px; height: 52px;
+  background: none; border: none; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: 50%;
+  transition: transform 0.5s cubic-bezier(0.34,1.56,0.64,1);
+  position: relative;
+}
+.flower-btn::after {
+  content: '';
+  position: absolute; inset: -4px;
+  border-radius: 50%;
+  background: var(--accent-dim);
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+.flower-btn:hover { transform: rotate(18deg) scale(1.1); }
+.flower-btn:hover::after { opacity: 1; }
+.flower-btn svg { width: 44px; height: 44px; display: block; filter: drop-shadow(0 2px 8px var(--accent-glow)); transition: filter var(--trans); }
+
+.theme-label {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 0.85rem;
+  font-style: italic;
+  color: var(--text-muted);
+  letter-spacing: 0.04em;
+  transition: color var(--trans);
+}
+
+/* ── App name ── */
+.app-name {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.5rem;
+  font-weight: 400;
+  letter-spacing: 0.12em;
+  color: var(--accent);
+  text-transform: uppercase;
+  position: absolute; left: 50%; transform: translateX(-50%);
+  transition: color var(--trans);
+}
+.app-name span { font-weight: 300; opacity: 0.6; }
+
+/* ── Search ── */
+.search-zone { position: relative; }
+.search-input {
+  width: 190px;
+  background: var(--panel);
+  border: 1px solid var(--panel-border);
+  border-radius: 24px;
+  padding: 7px 14px 7px 34px;
+  font-family: 'Manrope', sans-serif;
+  font-size: 0.75rem;
+  font-weight: 400;
+  color: var(--text-primary);
+  outline: none;
+  transition: width 0.3s ease, box-shadow 0.25s, border-color 0.25s, background 0.25s;
+  backdrop-filter: blur(10px);
+}
+.search-input::placeholder { color: var(--text-muted); }
+.search-input:focus { width: 250px; box-shadow: 0 0 0 2.5px var(--accent-glow); border-color: var(--accent); }
+.search-icon {
+  position: absolute; left: 11px; top: 50%; transform: translateY(-50%);
+  color: var(--text-muted); font-size: 13px; pointer-events: none;
+}
+
+.search-results {
+  position: absolute; top: calc(100% + 8px); right: 0;
+  background: rgba(255,255,255,0.85);
+  border: 1px solid var(--panel-border);
+  border-radius: 14px;
+  backdrop-filter: blur(20px);
+  width: 320px; max-height: 280px; overflow-y: auto;
+  z-index: 200;
+  display: none;
+  box-shadow: 0 12px 40px rgba(0,0,0,0.10), 0 2px 8px rgba(0,0,0,0.06);
+}
+.search-results.open { display: block; animation: fadeUp 0.18s ease; }
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.sr-item {
+  padding: 10px 14px; border-bottom: 1px solid rgba(0,0,0,0.05);
+  cursor: pointer; transition: background 0.12s;
+}
+.sr-item:last-child { border-bottom: none; }
+.sr-item:hover { background: rgba(255,255,255,0.7); }
+.sr-combo { font-size: 0.72rem; font-weight: 600; color: var(--accent); letter-spacing: 0.04em; }
+.sr-desc { font-size: 0.68rem; color: var(--text-secondary); margin-top: 2px; line-height: 1.4; }
+.sr-tag {
+  display: inline-block;
+  font-size: 0.55rem; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase;
+  background: var(--accent-dim); color: var(--accent-deep);
+  padding: 1px 6px; border-radius: 6px; margin-right: 5px; vertical-align: middle;
+}
+
+/* ═══════════════════════════════════════════════════
+   KEYBOARD PANEL
+═══════════════════════════════════════════════════ */
+.kb-panel {
+  background: var(--panel);
+  border: 1px solid var(--panel-border);
+  border-radius: 22px;
+  padding: 20px 18px 18px;
+  backdrop-filter: blur(16px);
+  box-shadow:
+    0 1px 0 rgba(255,255,255,0.85) inset,
+    0 6px 48px rgba(0,0,0,0.07),
+    0 2px 8px rgba(0,0,0,0.04);
+  max-width: 1200px; width: 100%;
+  position: relative; z-index: 5;
+  transition: background var(--trans), box-shadow var(--trans);
+}
+
+/* ── Layout ── */
+.kb-outer { display: flex; gap: 10px; align-items: flex-start; }
+.kb-main-block { display: flex; flex-direction: column; gap: 0; flex: 1; min-width: 0; }
+.kb-sep { width: 1px; background: var(--key-border); margin: 0 2px; align-self: stretch; flex-shrink: 0; }
+.kb-nav-block { display: flex; flex-direction: column; gap: 0; flex-shrink: 0; }
+.kb-num-block { display: flex; flex-direction: column; gap: 0; flex-shrink: 0; }
+
+.kb-row { display: flex; gap: 4px; margin-bottom: 4px; align-items: flex-end; }
+.kb-row:last-child { margin-bottom: 0; }
+.row-gap { height: 8px; }
+
+/* ═══════════════════════════════════════════════════
+   KEYS — the real deal
+═══════════════════════════════════════════════════ */
+.key {
+  position: relative;
+  height: 38px;
+  min-width: 38px;
+  background: linear-gradient(160deg, var(--key-face) 0%, var(--key-face2) 100%);
+  border: 1px solid var(--key-border);
+  border-radius: 7px;
+  /* Layered shadow: top highlight + drop + depth */
+  box-shadow:
+    0 1px 0 rgba(255,255,255,0.9) inset,
+    0 -1px 0 rgba(0,0,0,0.04) inset,
+    0 3px 0 0 var(--key-shadow-a),
+    0 4px 6px rgba(0,0,0,0.06);
+  cursor: pointer;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  user-select: none;
+  transition:
+    background var(--trans-fast),
+    box-shadow var(--trans-fast),
+    transform var(--trans-fast),
+    border-color var(--trans-fast);
+  flex-shrink: 0;
+  outline: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.key:hover {
+  background: linear-gradient(160deg, #ffffff 0%, #f9f5f6 100%);
+  box-shadow:
+    0 1px 0 rgba(255,255,255,0.9) inset,
+    0 -1px 0 rgba(0,0,0,0.04) inset,
+    0 3px 0 0 var(--key-shadow-a),
+    0 4px 12px rgba(0,0,0,0.08),
+    0 0 0 1px color-mix(in srgb, var(--accent) 30%, transparent);
+}
+
+.key:active, .key.anim-press {
+  transform: translateY(2px);
+  box-shadow:
+    0 1px 0 rgba(255,255,255,0.8) inset,
+    0 1px 0 0 var(--key-shadow-a),
+    0 1px 3px rgba(0,0,0,0.08);
+}
+
+/* ACTIVE STATE */
+.key.active {
+  background: linear-gradient(140deg, color-mix(in srgb, var(--accent) 92%, white), color-mix(in srgb, var(--accent) 78%, #300));
+  border-color: var(--accent-deep);
+  box-shadow:
+    0 1px 0 rgba(255,255,255,0.25) inset,
+    0 3px 0 0 var(--accent-deep),
+    0 0 14px var(--accent-glow),
+    0 0 32px var(--accent-dim);
+  color: #fff;
+}
+.key.active .key-main { color: #fff; }
+.key.active .key-sub { color: rgba(255,255,255,0.65); }
+
+/* HINT STATE */
+.key.hint:not(.active) {
+  box-shadow:
+    0 1px 0 rgba(255,255,255,0.9) inset,
+    0 3px 0 0 var(--key-shadow-a),
+    0 0 0 1.5px color-mix(in srgb, var(--accent) 55%, transparent),
+    0 0 10px var(--accent-dim);
+  border-color: color-mix(in srgb, var(--accent) 45%, transparent);
+}
+
+/* Key text */
+.key-main {
+  font-family: 'Manrope', sans-serif;
+  font-size: 0.6rem;
+  font-weight: 500;
+  color: var(--key-text);
+  line-height: 1; text-align: center;
+  pointer-events: none; white-space: nowrap;
+  letter-spacing: 0.01em;
+}
+.key-sub {
+  font-size: 0.5rem;
+  color: var(--key-sub);
+  margin-top: 1px;
+  pointer-events: none; text-align: center;
+  letter-spacing: 0.01em;
+}
+
+/* Modifier keys get slightly different label treatment */
+.key.mod .key-main { font-size: 0.55rem; font-weight: 600; letter-spacing: 0.04em; }
+
+/* ── Key widths ── */
+.k-38  { min-width: 38px; }
+.k-44  { min-width: 44px; }
+.k-50  { min-width: 50px; }
+.k-56  { min-width: 56px; }
+.k-62  { min-width: 62px; }
+.k-70  { min-width: 70px; }
+.k-76  { min-width: 76px; }
+.k-82  { min-width: 82px; }
+.k-88  { min-width: 88px; }
+.k-96  { min-width: 96px; }
+.k-114 { min-width: 114px; }
+.k-136 { min-width: 136px; }
+.k-spc { flex: 1; min-width: 200px; }
+
+/* Tall keys (numpad + Enter) */
+.key.tall { height: 80px; align-self: flex-start; }
+
+/* Ghost key (invisible spacer) */
+.key.ghost { visibility: hidden; pointer-events: none; }
+
+/* ── Function row spacing ── */
+.fn-gap { width: 12px; flex-shrink: 0; }
+.fn-gap-sm { width: 6px; flex-shrink: 0; }
+
+/* ═══════════════════════════════════════════════════
+   BOTTOM PANELS
+═══════════════════════════════════════════════════ */
+.bottom-area {
+  width: 100%; max-width: 1200px;
+  margin-top: 12px;
+  display: grid;
+  grid-template-columns: 1fr 280px;
+  gap: 10px;
+  position: relative; z-index: 5;
+}
+
+.interpreter-panel {
+  background: var(--panel);
+  border: 1px solid var(--panel-border);
+  border-radius: 18px;
+  padding: 18px 22px;
+  backdrop-filter: blur(16px);
+  min-height: 120px;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.05);
+  transition: background var(--trans);
+}
+
+.history-panel {
+  background: var(--panel);
+  border: 1px solid var(--panel-border);
+  border-radius: 18px;
+  padding: 14px 16px;
+  backdrop-filter: blur(16px);
+  overflow-y: auto;
+  max-height: 200px;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.05);
+}
+
+/* ── Combo line ── */
+.combo-display {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.6rem;
+  font-weight: 400;
+  color: var(--accent);
+  line-height: 1.2;
+  min-height: 2rem;
+  letter-spacing: 0.02em;
+  transition: color var(--trans);
+}
+.combo-key { display: inline; }
+.combo-sep { font-size: 1.1rem; opacity: 0.4; margin: 0 6px; font-weight: 300; }
+
+/* ── Match cards ── */
+.match-area { margin-top: 10px; display: flex; flex-direction: column; gap: 7px; }
+
+.match-card {
+  background: rgba(255,255,255,0.55);
+  border: 1px solid rgba(255,255,255,0.8);
+  border-radius: 11px;
+  padding: 10px 14px;
+  animation: cardIn 0.2s ease;
+  transition: background 0.15s;
+}
+.match-card:hover { background: rgba(255,255,255,0.75); }
+
+@keyframes cardIn {
+  from { opacity: 0; transform: translateY(5px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.mc-header { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
+.mc-tag {
+  font-size: 0.55rem; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase;
+  background: var(--accent-dim); color: var(--accent-deep);
+  padding: 2px 7px; border-radius: 6px;
+  transition: background var(--trans), color var(--trans);
+}
+.mc-category {
+  font-size: 0.6rem; color: var(--text-muted); font-weight: 400; letter-spacing: 0.04em;
+}
+.mc-desc {
+  font-family: 'Manrope', sans-serif;
+  font-size: 0.8rem; font-weight: 500; color: var(--text-primary);
+  line-height: 1.4;
+}
+.mc-meta {
+  margin-top: 5px; font-size: 0.67rem; color: var(--text-muted); line-height: 1.5;
+}
+.mc-mac { font-style: italic; }
+.mc-note { opacity: 0.75; }
+
+/* ── Partial match suggestions ── */
+.partial-area { margin-top: 8px; }
+.partial-label {
+  font-size: 0.62rem; color: var(--text-muted); font-weight: 500;
+  letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 6px;
+}
+.partial-chips { display: flex; flex-wrap: wrap; gap: 5px; }
+.chip {
+  font-size: 0.65rem; font-weight: 500;
+  background: rgba(255,255,255,0.6); border: 1px solid var(--panel-border);
+  border-radius: 20px; padding: 3px 10px; color: var(--text-secondary);
+  cursor: pointer; transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+.chip:hover { background: var(--accent); color: #fff; border-color: var(--accent); }
+.chip-key { color: var(--accent); font-weight: 600; }
+
+/* ── History ── */
+.history-title {
+  font-size: 0.58rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--text-muted); margin-bottom: 8px;
+}
+.hist-item {
+  padding: 6px 0; border-bottom: 1px solid rgba(0,0,0,0.05);
+  cursor: pointer; transition: opacity 0.15s;
+}
+.hist-item:last-child { border-bottom: none; }
+.hist-item:hover { opacity: 0.7; }
+.hist-combo { font-size: 0.67rem; font-weight: 600; color: var(--accent); letter-spacing: 0.03em; }
+.hist-desc { font-size: 0.62rem; color: var(--text-muted); margin-top: 1px; line-height: 1.3; }
+
+/* empty state */
+.empty-state {
+  color: var(--text-muted); font-size: 0.75rem; font-style: italic;
+  font-family: 'Cormorant Garamond', serif;
+  opacity: 0.7; padding: 6px 0;
+}
+
+/* ═══════════════════════════════════════════════════
+   TOOLTIP
+═══════════════════════════════════════════════════ */
+#tooltip {
+  position: fixed;
+  background: rgba(28,20,22,0.88);
+  color: rgba(255,255,255,0.92);
+  font-family: 'Manrope', sans-serif;
+  font-size: 0.67rem; line-height: 1.55;
+  padding: 8px 13px;
+  border-radius: 10px;
+  max-width: 230px;
+  pointer-events: none;
+  z-index: 999;
+  opacity: 0; transition: opacity 0.18s;
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255,255,255,0.1);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+}
+#tooltip.show { opacity: 1; }
+#tooltip .tt-combo { font-weight: 600; color: #fff; margin-bottom: 3px; font-size: 0.7rem; }
+
+/* ═══════════════════════════════════════════════════
+   SCROLLBAR
+═══════════════════════════════════════════════════ */
+::-webkit-scrollbar { width: 3px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 2px; opacity: 0.4; }
+
+/* ═══════════════════════════════════════════════════
+   THEME BLOOM TRANSITION
+═══════════════════════════════════════════════════ */
+.theme-bloom {
+  position: fixed; top: 36px; left: 36px;
+  width: 4px; height: 4px;
+  border-radius: 50%;
+  background: var(--accent);
+  pointer-events: none; z-index: 3;
+  transform: scale(0);
+  transition: transform 0.6s cubic-bezier(0.4,0,0.2,1), opacity 0.6s;
+  opacity: 0;
+}
+.theme-bloom.blooming {
+  transform: scale(600);
+  opacity: 0.18;
+}
+</style>
+</head>
+<body>
+
+<div class="theme-bloom" id="bloom"></div>
+<div id="tooltip"><div class="tt-combo" id="tt-combo"></div><div id="tt-body"></div></div>
+
+<!-- ═══ TOP BAR ═══ -->
+<div class="topbar">
+  <div class="flower-wrap">
+    <button class="flower-btn" id="flowerBtn" aria-label="Cycle theme"></button>
+    <span class="theme-label" id="themeLabel">Sakura</span>
+  </div>
+
+  <div class="app-name">Atlas <span>/ key explorer</span></div>
+
+  <div class="search-zone">
+    <span class="search-icon">⌕</span>
+    <input class="search-input" id="searchInput" type="text" placeholder="Search shortcuts…" autocomplete="off" spellcheck="false">
+    <div class="search-results" id="searchResults"></div>
+  </div>
+</div>
+
+<!-- ═══ KEYBOARD PANEL ═══ -->
+<div class="kb-panel">
+  <div class="kb-outer">
+    <div class="kb-main-block" id="kbMain"></div>
+    <div class="kb-sep"></div>
+    <div class="kb-nav-block" id="kbNav"></div>
+    <div class="kb-sep"></div>
+    <div class="kb-num-block" id="kbNum"></div>
+  </div>
+</div>
+
+<!-- ═══ BOTTOM ═══ -->
+<div class="bottom-area">
+  <div class="interpreter-panel">
+    <div class="combo-display" id="comboDisplay">
+      <span class="empty-state">Press or click keys to explore…</span>
+    </div>
+    <div id="matchArea"></div>
+  </div>
+  <div class="history-panel">
+    <div class="history-title">Recent</div>
+    <div id="historyList"><div class="empty-state">No combos yet.</div></div>
+  </div>
+</div>
+
+<script>
+'use strict';
+
+/* ═══════════════════════════════════════════════════
+   THEMES
+═══════════════════════════════════════════════════ */
+const THEMES = [
+  { name:'Sakura',    bg:'#F5E6EC', bg2:'#f0dce4', accent:'#C2607A', deep:'#9a3d56', glow:'rgba(194,96,122,0.28)', dim:'rgba(194,96,122,0.16)' },
+  { name:'Wakatake',  bg:'#E8F0E4', bg2:'#dfe9da', accent:'#5D8C52', deep:'#3a6330', glow:'rgba(93,140,82,0.28)',  dim:'rgba(93,140,82,0.16)' },
+  { name:'Fuji',      bg:'#EEE8F5', bg2:'#e6dff0', accent:'#8262B8', deep:'#5c3e96', glow:'rgba(130,98,184,0.28)',dim:'rgba(130,98,184,0.16)' },
+  { name:'Sindhi',    bg:'#FBF0E2', bg2:'#f5e8d4', accent:'#C07B30', deep:'#8f5514', glow:'rgba(192,123,48,0.28)', dim:'rgba(192,123,48,0.16)' },
+  { name:'Bay',       bg:'#E4EDF8', bg2:'#d8e5f4', accent:'#3A6EA8', deep:'#1e4c80', glow:'rgba(58,110,168,0.28)', dim:'rgba(58,110,168,0.16)' },
+];
+let themeIdx = 0;
+
+const FLOWERS = [
+  // 0 Sakura — ink-style cherry blossom
+  `<svg viewBox="0 0 44 44" xmlns="http://www.w3.org/2000/svg">
+    <g transform="translate(22,22)">
+      ${[0,72,144,216,288].map(a=>`
+        <g transform="rotate(${a})">
+          <path d="M0,-14 C3,-10 5,-6 0,-2 C-5,-6 -3,-10 0,-14Z" fill="#F9C8D4" stroke="#C2607A" stroke-width="0.6"/>
+          <path d="M0,-14 C1,-12 1,-9 0,-7" fill="none" stroke="#e8a0b4" stroke-width="0.5"/>
+        </g>`).join('')}
+    </g>
+    <circle cx="22" cy="22" r="3.5" fill="#ffe8b0" stroke="#C2607A" stroke-width="0.7"/>
+    <circle cx="22" cy="22" r="1.4" fill="#C2607A"/>
+    ${[0,60,120,180,240,300].map(a=>`<circle cx="${22+3.5*Math.cos(a*Math.PI/180)}" cy="${22+3.5*Math.sin(a*Math.PI/180)}" r="0.6" fill="#C2607A"/>`).join('')}
+  </svg>`,
+
+  // 1 Wakatake — elegant bamboo stem + leaves
+  `<svg viewBox="0 0 44 44" xmlns="http://www.w3.org/2000/svg">
+    <line x1="22" y1="40" x2="22" y2="6" stroke="#5D8C52" stroke-width="2.2" stroke-linecap="round"/>
+    <line x1="22" y1="32" x2="22" y2="22" stroke="#7ab870" stroke-width="1.2"/>
+    <line x1="22" y1="22" x2="22" y2="14" stroke="#7ab870" stroke-width="1.2"/>
+    <path d="M22,30 Q12,27 10,20" fill="none" stroke="#5D8C52" stroke-width="1.4" stroke-linecap="round"/>
+    <path d="M22,22 Q32,18 34,12" fill="none" stroke="#5D8C52" stroke-width="1.4" stroke-linecap="round"/>
+    <path d="M22,16 Q13,14 11,8" fill="none" stroke="#5D8C52" stroke-width="1.2" stroke-linecap="round"/>
+    <ellipse cx="11" cy="20" rx="5" ry="2.5" fill="#9ad494" stroke="#5D8C52" stroke-width="0.5" transform="rotate(-20 11 20)"/>
+    <ellipse cx="33" cy="12" rx="5" ry="2.5" fill="#7ab870" stroke="#5D8C52" stroke-width="0.5" transform="rotate(25 33 12)"/>
+    <ellipse cx="11.5" cy="8.5" rx="4" ry="2" fill="#9ad494" stroke="#5D8C52" stroke-width="0.5" transform="rotate(-20 11.5 8.5)"/>
+  </svg>`,
+
+  // 2 Wisteria — drooping clusters
+  `<svg viewBox="0 0 44 44" xmlns="http://www.w3.org/2000/svg">
+    <path d="M22,4 Q18,9 16,16" fill="none" stroke="#8262B8" stroke-width="1.3" stroke-linecap="round"/>
+    <path d="M22,4 Q26,9 28,16" fill="none" stroke="#8262B8" stroke-width="1.3" stroke-linecap="round"/>
+    <path d="M22,4 L22,14" fill="none" stroke="#8262B8" stroke-width="1.5" stroke-linecap="round"/>
+    ${[[22,18],[17,22],[27,22],[14,27],[22,27],[30,27],[17,33],[27,33],[22,38]].map(([x,y],i)=>`
+      <ellipse cx="${x}" cy="${y}" rx="${3.5-i*0.1}" ry="${4.5-i*0.1}" fill="${i%2===0?'#c4adec':'#d6c5f5'}" stroke="#8262B8" stroke-width="0.55" opacity="${1-i*0.05}"/>`).join('')}
+  </svg>`,
+
+  // 3 Marigold — dense layered petals
+  `<svg viewBox="0 0 44 44" xmlns="http://www.w3.org/2000/svg">
+    <g transform="translate(22,22)">
+      ${[0,25.7,51.4,77.1,102.9,128.6,154.3,180,205.7,231.4,257.1,282.9,308.6,334.3].map((a,i)=>`
+        <ellipse cx="0" cy="${-13+i*0.15}" rx="2.8" ry="${6.5-i*0.1}" fill="${i%2===0?'#F0A830':'#F8C860'}" stroke="#C07B30" stroke-width="0.5" transform="rotate(${a})" opacity="0.95"/>`).join('')}
+      ${[12.9,38.6,64.3,90,115.7,141.4,167.1,192.9,218.6,244.3,270,295.7,321.4,347.1].map((a,i)=>`
+        <ellipse cx="0" cy="-8" rx="2.5" ry="5.5" fill="${i%2===0?'#FAD070':'#F5B840'}" stroke="#C07B30" stroke-width="0.4" transform="rotate(${a})" opacity="0.85"/>`).join('')}
+    </g>
+    <circle cx="22" cy="22" r="5.5" fill="#C07B30"/>
+    <circle cx="22" cy="22" r="3" fill="#8a4f0a"/>
+    ${[0,45,90,135,180,225,270,315].map(a=>`<circle cx="${22+2.2*Math.cos(a*Math.PI/180)}" cy="${22+2.2*Math.sin(a*Math.PI/180)}" r="0.7" fill="#f0a830"/>`).join('')}
+  </svg>`,
+
+  // 4 California Poppy — cup shaped
+  `<svg viewBox="0 0 44 44" xmlns="http://www.w3.org/2000/svg">
+    <g transform="translate(22,22)">
+      ${[0,90,180,270].map(a=>`
+        <path d="M0,0 C4,-5 6,-12 0,-16 C-6,-12 -4,-5 0,0Z" fill="#6FA8D4" stroke="#3A6EA8" stroke-width="0.7" transform="rotate(${a})" opacity="0.9"/>`).join('')}
+      ${[45,135,225,315].map(a=>`
+        <path d="M0,0 C3,-4 5,-10 0,-13 C-5,-10 -3,-4 0,0Z" fill="#84BCDF" stroke="#3A6EA8" stroke-width="0.5" transform="rotate(${a})" opacity="0.75"/>`).join('')}
+    </g>
+    <circle cx="22" cy="22" r="4.5" fill="#3A6EA8"/>
+    <circle cx="22" cy="22" r="2.2" fill="#e4edf8" opacity="0.9"/>
+    <circle cx="22" cy="22" r="1" fill="#3A6EA8"/>
+  </svg>`,
+];
+
+function applyTheme(idx, animate=true) {
+  const t = THEMES[idx];
+  const r = document.documentElement;
+  r.style.setProperty('--bg', t.bg);
+  r.style.setProperty('--bg2', t.bg2);
+  r.style.setProperty('--accent', t.accent);
+  r.style.setProperty('--accent-deep', t.deep);
+  r.style.setProperty('--accent-glow', t.glow);
+  r.style.setProperty('--accent-dim', t.dim);
+  document.getElementById('flowerBtn').innerHTML = FLOWERS[idx];
+  document.getElementById('themeLabel').textContent = t.name;
+
+  if(animate) {
+    const bloom = document.getElementById('bloom');
+    bloom.style.background = t.accent;
+    bloom.style.transition = 'none';
+    bloom.style.transform = 'scale(0)';
+    bloom.style.opacity = '0';
+    requestAnimationFrame(()=>{
+      bloom.style.transition = 'transform 0.65s cubic-bezier(0.4,0,0.2,1), opacity 0.65s';
+      bloom.style.transform = 'scale(600)';
+      bloom.style.opacity = '0.14';
+      setTimeout(()=>{ bloom.style.opacity='0'; bloom.style.transform='scale(0)'; }, 650);
+    });
+  }
+}
+
+/* ═══════════════════════════════════════════════════
+   SHORTCUTS DATABASE
+═══════════════════════════════════════════════════ */
+const DB = [
+// ── WINDOWS / UNIVERSAL ──
+{keys:['ctrl','c'],desc:'Copy',category:'Clipboard',app:'Windows',mac:'⌘C',hint:'Copies selection to clipboard.',tags:['copy','clipboard']},
+{keys:['ctrl','x'],desc:'Cut',category:'Clipboard',app:'Windows',mac:'⌘X',hint:'Cuts selection to clipboard.',tags:['cut','clipboard']},
+{keys:['ctrl','v'],desc:'Paste',category:'Clipboard',app:'Windows',mac:'⌘V',hint:'Pastes clipboard contents.',tags:['paste','clipboard']},
+{keys:['ctrl','shift','v'],desc:'Paste without formatting',category:'Clipboard',app:'Windows',mac:'⌘⇧V',hint:'Strips formatting on paste.',tags:['paste','plain text','formatting']},
+{keys:['ctrl','z'],desc:'Undo',category:'Editing',app:'Windows',mac:'⌘Z',hint:'Reverts last action.',tags:['undo','revert']},
+{keys:['ctrl','y'],desc:'Redo',category:'Editing',app:'Windows',mac:'⌘⇧Z',hint:'Re-applies undone action.',tags:['redo']},
+{keys:['ctrl','a'],desc:'Select all',category:'Selection',app:'Windows',mac:'⌘A',hint:'Selects all content.',tags:['select','all']},
+{keys:['ctrl','s'],desc:'Save',category:'File',app:'Windows',mac:'⌘S',hint:'Saves the current document.',tags:['save','file']},
+{keys:['ctrl','shift','s'],desc:'Save As',category:'File',app:'Windows',mac:'⌘⇧S',hint:'Opens Save As dialog.',tags:['save','save as','file']},
+{keys:['ctrl','p'],desc:'Print',category:'File',app:'Windows',mac:'⌘P',hint:'Opens print dialog.',tags:['print']},
+{keys:['ctrl','f'],desc:'Find',category:'Search',app:'Windows',mac:'⌘F',hint:'Opens Find dialog.',tags:['find','search']},
+{keys:['ctrl','h'],desc:'Find and Replace',category:'Search',app:'Windows',mac:'⌘H',hint:'Opens Find & Replace.',tags:['find','replace','search']},
+{keys:['ctrl','n'],desc:'New window / document',category:'Window',app:'Windows',mac:'⌘N',hint:'Creates a new window or document.',tags:['new','window','document']},
+{keys:['ctrl','o'],desc:'Open',category:'File',app:'Windows',mac:'⌘O',hint:'Opens file dialog.',tags:['open','file']},
+{keys:['ctrl','w'],desc:'Close tab or window',category:'Window',app:'Windows',mac:'⌘W',hint:'Closes active tab or window.',tags:['close','tab','window']},
+{keys:['ctrl','t'],desc:'New tab',category:'Browser',app:'Browser',mac:'⌘T',hint:'Opens a new tab.',tags:['tab','new','browser']},
+{keys:['ctrl','tab'],desc:'Next tab',category:'Browser',app:'Browser',mac:'⌃Tab',hint:'Switches to the next tab.',tags:['tab','next','switch']},
+{keys:['ctrl','shift','tab'],desc:'Previous tab',category:'Browser',app:'Browser',mac:'⌃⇧Tab',hint:'Switches to previous tab.',tags:['tab','previous','switch']},
+{keys:['ctrl','b'],desc:'Bold',category:'Formatting',app:'Windows',mac:'⌘B',hint:'Toggles bold text.',tags:['bold','format']},
+{keys:['ctrl','i'],desc:'Italic',category:'Formatting',app:'Windows',mac:'⌘I',hint:'Toggles italic text.',tags:['italic','format']},
+{keys:['ctrl','u'],desc:'Underline',category:'Formatting',app:'Windows',mac:'⌘U',hint:'Toggles underline.',tags:['underline','format']},
+{keys:['ctrl','k'],desc:'Insert hyperlink',category:'Formatting',app:'Windows',mac:'⌘K',hint:'Opens insert link dialog.',tags:['link','hyperlink','url']},
+{keys:['ctrl','d'],desc:'Duplicate / Bookmark',category:'Editing',app:'Browser',mac:'⌘D',hint:'Bookmarks page or duplicates selection.',tags:['bookmark','duplicate']},
+{keys:['ctrl','l'],desc:'Focus address bar / Align left',category:'Browser',app:'Browser',mac:'⌘L',hint:'Selects address bar in browser.',tags:['address','location','bar']},
+{keys:['ctrl','r'],desc:'Refresh / Fill right',category:'Browser',app:'Browser',mac:'⌘R',hint:'Refreshes the page.',tags:['refresh','reload']},
+{keys:['ctrl','shift','r'],desc:'Hard refresh (no cache)',category:'Browser',app:'Browser',mac:'⌘⇧R',hint:'Reloads page ignoring cache.',tags:['hard refresh','cache','reload']},
+{keys:['ctrl','shift','t'],desc:'Reopen last closed tab',category:'Browser',app:'Browser',mac:'⌘⇧T',hint:'Restores the most recently closed tab.',tags:['reopen','tab','restore']},
+{keys:['ctrl','shift','n'],desc:'New incognito window',category:'Browser',app:'Browser',mac:'⌘⇧N',hint:'Opens a private browsing window.',tags:['incognito','private','window']},
+{keys:['ctrl','shift','b'],desc:'Toggle bookmarks bar',category:'Browser',app:'Browser',mac:'⌘⇧B',hint:'Shows or hides the bookmarks bar.',tags:['bookmarks','bar','toggle']},
+{keys:['ctrl','shift','j'],desc:'Open downloads / Console',category:'Browser',app:'Browser',mac:'⌘⇧J',hint:'Opens downloads or developer console.',tags:['downloads','console','developer']},
+{keys:['ctrl','shift','del'],desc:'Clear browsing data',category:'Browser',app:'Browser',mac:'⌘⇧⌫',hint:'Opens clear browsing data dialog.',tags:['clear','history','cache','cookies']},
+{keys:['ctrl','0'],desc:'Reset zoom to 100%',category:'Browser',app:'Browser',mac:'⌘0',hint:'Returns page zoom to default.',tags:['zoom','reset','100%']},
+{keys:['ctrl','='],desc:'Zoom in',category:'Browser',app:'Browser',mac:'⌘=',hint:'Increases zoom level.',tags:['zoom','in','bigger']},
+{keys:['ctrl','-'],desc:'Zoom out',category:'Browser',app:'Browser',mac:'⌘-',hint:'Decreases zoom level.',tags:['zoom','out','smaller']},
+{keys:['ctrl','home'],desc:'Go to beginning',category:'Navigation',app:'Windows',mac:'⌘↑',hint:'Jumps to start of document.',tags:['beginning','start','top']},
+{keys:['ctrl','end'],desc:'Go to end',category:'Navigation',app:'Windows',mac:'⌘↓',hint:'Jumps to end of document.',tags:['end','bottom']},
+{keys:['ctrl','left'],desc:'Jump word left',category:'Navigation',app:'Windows',mac:'⌥←',hint:'Moves cursor one word left.',tags:['word','left','cursor']},
+{keys:['ctrl','right'],desc:'Jump word right',category:'Navigation',app:'Windows',mac:'⌥→',hint:'Moves cursor one word right.',tags:['word','right','cursor']},
+{keys:['ctrl','shift','left'],desc:'Select word left',category:'Selection',app:'Windows',mac:'⌥⇧←',hint:'Selects one word to the left.',tags:['select','word','left']},
+{keys:['ctrl','shift','right'],desc:'Select word right',category:'Selection',app:'Windows',mac:'⌥⇧→',hint:'Selects one word to the right.',tags:['select','word','right']},
+{keys:['ctrl','shift','home'],desc:'Select to beginning',category:'Selection',app:'Windows',mac:'⌘⇧↑',hint:'Selects from cursor to document start.',tags:['select','beginning','all']},
+{keys:['ctrl','shift','end'],desc:'Select to end',category:'Selection',app:'Windows',mac:'⌘⇧↓',hint:'Selects from cursor to document end.',tags:['select','end','all']},
+{keys:['ctrl','g'],desc:'Go to line / Find next',category:'Navigation',app:'Windows',mac:'⌘G',hint:'Opens Go To dialog or finds next.',tags:['go to','line','find next']},
+{keys:['ctrl','shift','esc'],desc:'Open Task Manager',category:'System',app:'Windows',mac:'⌘⌥Esc',hint:'Directly opens Windows Task Manager.',tags:['task manager','processes','cpu','memory']},
+{keys:['ctrl','alt','del'],desc:'Security options screen',category:'System',app:'Windows',hint:'Lock, switch user, Task Manager, sign out.',tags:['task manager','lock','security','ctrl alt delete']},
+{keys:['alt','tab'],desc:'Switch between apps',category:'Window',app:'Windows',mac:'⌘Tab',hint:'Cycles through open application windows.',tags:['switch','app','window','alt tab']},
+{keys:['alt','shift','tab'],desc:'Switch apps in reverse',category:'Window',app:'Windows',mac:'⌘⇧Tab',hint:'Cycles windows in reverse.',tags:['switch','app','window','reverse']},
+{keys:['alt','f4'],desc:'Close active window',category:'Window',app:'Windows',mac:'⌘Q',hint:'Closes the currently active window.',tags:['close','quit','exit','window']},
+{keys:['alt','enter'],desc:'Open Properties',category:'System',app:'Windows',hint:'Opens Properties for selected item.',tags:['properties','settings','item']},
+{keys:['alt','left'],desc:'Browser back',category:'Browser',app:'Browser',mac:'⌘←',hint:'Navigates back in browser history.',tags:['back','browser','history']},
+{keys:['alt','right'],desc:'Browser forward',category:'Browser',app:'Browser',mac:'⌘→',hint:'Navigates forward in browser history.',tags:['forward','browser','history']},
+{keys:['win','d'],desc:'Show / hide desktop',category:'Window',app:'Windows',hint:'Minimises all windows to show desktop.',tags:['desktop','minimize','show']},
+{keys:['win','e'],desc:'Open File Explorer',category:'System',app:'Windows',hint:'Opens Windows File Explorer.',tags:['explorer','file','folder']},
+{keys:['win','l'],desc:'Lock the PC',category:'System',app:'Windows',hint:'Immediately locks your computer.',tags:['lock','screen','security']},
+{keys:['win','r'],desc:'Open Run dialog',category:'System',app:'Windows',hint:'Opens the Run command box.',tags:['run','command','execute']},
+{keys:['win','s'],desc:'Windows Search',category:'System',app:'Windows',hint:'Opens Windows Search / Cortana.',tags:['search','find','cortana']},
+{keys:['win','i'],desc:'Open Settings',category:'System',app:'Windows',hint:'Opens Windows Settings.',tags:['settings','preferences','options']},
+{keys:['win','a'],desc:'Open Action Center',category:'System',app:'Windows',hint:'Opens notification / Action Center.',tags:['action center','notifications','quick settings']},
+{keys:['win','v'],desc:'Clipboard history',category:'Clipboard',app:'Windows',hint:'Opens clipboard history panel.',tags:['clipboard','history','paste']},
+{keys:['win','x'],desc:'Quick Link menu',category:'System',app:'Windows',hint:'Opens power-user context menu.',tags:['quick link','power user','menu']},
+{keys:['win','left'],desc:'Snap window left',category:'Window',app:'Windows',hint:'Snaps active window to left half.',tags:['snap','window','split','left']},
+{keys:['win','right'],desc:'Snap window right',category:'Window',app:'Windows',hint:'Snaps active window to right half.',tags:['snap','window','split','right']},
+{keys:['win','up'],desc:'Maximise window',category:'Window',app:'Windows',hint:'Maximises the active window.',tags:['maximize','window','full']},
+{keys:['win','down'],desc:'Minimise window',category:'Window',app:'Windows',hint:'Minimises or restores window.',tags:['minimize','window','restore']},
+{keys:['win','shift','s'],desc:'Screenshot (Snip & Sketch)',category:'System',app:'Windows',hint:'Opens Snipping Tool overlay for area capture.',tags:['screenshot','snip','capture','screen']},
+{keys:['win','tab'],desc:'Task View',category:'Window',app:'Windows',hint:'Opens Task View / virtual desktops.',tags:['task view','virtual desktop','overview']},
+{keys:['win','ctrl','d'],desc:'New virtual desktop',category:'Window',app:'Windows',hint:'Creates a new virtual desktop.',tags:['virtual desktop','new','desktop']},
+{keys:['win','ctrl','left'],desc:'Previous virtual desktop',category:'Window',app:'Windows',hint:'Switches to left virtual desktop.',tags:['virtual desktop','previous','switch']},
+{keys:['win','ctrl','right'],desc:'Next virtual desktop',category:'Window',app:'Windows',hint:'Switches to right virtual desktop.',tags:['virtual desktop','next','switch']},
+{keys:['win','.'],desc:'Open Emoji Picker',category:'Input',app:'Windows',hint:'Opens emoji and symbol picker.',tags:['emoji','symbol','picker']},
+{keys:['win','shift','left'],desc:'Move window to left monitor',category:'Window',app:'Windows',hint:'Moves window to the left display.',tags:['monitor','move','display','multi']},
+{keys:['win','shift','right'],desc:'Move window to right monitor',category:'Window',app:'Windows',hint:'Moves window to the right display.',tags:['monitor','move','display','multi']},
+{keys:['printscr'],desc:'Screenshot to clipboard',category:'System',app:'Windows',hint:'Captures full screen to clipboard.',tags:['screenshot','capture','clipboard','print screen']},
+{keys:['alt','printscr'],desc:'Screenshot active window',category:'System',app:'Windows',hint:'Captures active window to clipboard.',tags:['screenshot','window','capture']},
+{keys:['f1'],desc:'Help',category:'General',app:'Windows',hint:'Opens help in most applications.',tags:['help','support','documentation']},
+{keys:['f2'],desc:'Rename selected item',category:'File',app:'Windows',hint:'Renames selected file or item.',tags:['rename','file']},
+{keys:['f3'],desc:'Search / Find next',category:'Search',app:'Windows',hint:'Opens search; finds next occurrence.',tags:['find','search','next']},
+{keys:['f4'],desc:'Address bar focus',category:'Browser',app:'Browser',hint:'Selects address bar in browser or Explorer.',tags:['address','url','bar']},
+{keys:['f5'],desc:'Refresh',category:'Browser',app:'Browser',mac:'⌘R',hint:'Refreshes current page or window.',tags:['refresh','reload','f5']},
+{keys:['f11'],desc:'Toggle full screen',category:'Browser',app:'Browser',mac:'⌃⌘F',hint:'Enters or exits full-screen mode.',tags:['full screen','fullscreen','f11']},
+{keys:['f12'],desc:'Open Developer Tools',category:'Browser',app:'Browser',mac:'⌘⌥I',hint:'Opens browser DevTools.',tags:['devtools','developer','inspector','console']},
+{keys:['ctrl','shift','i'],desc:'Open Developer Tools',category:'Browser',app:'Browser',mac:'⌘⌥I',hint:'Opens browser DevTools.',tags:['devtools','developer','inspector']},
+{keys:['ctrl','u'],desc:'View page source',category:'Browser',app:'Browser',mac:'⌘U',hint:'Shows the HTML source of the current page.',tags:['source','html','view source']},
+{keys:['esc'],desc:'Cancel / Close',category:'General',app:'Windows',mac:'Esc',hint:'Cancels current action or closes dialog.',tags:['cancel','close','escape']},
+{keys:['del'],desc:'Delete',category:'Editing',app:'Windows',mac:'Delete',hint:'Deletes selected item or character.',tags:['delete','remove']},
+{keys:['shift','del'],desc:'Permanently delete (no recycle)',category:'File',app:'Windows',hint:'Deletes without sending to Recycle Bin.',tags:['delete','permanent','recycle bin']},
+{keys:['home'],desc:'Go to line beginning',category:'Navigation',app:'Windows',mac:'⌘←',hint:'Moves cursor to start of current line.',tags:['beginning','line','start','home']},
+{keys:['end'],desc:'Go to line end',category:'Navigation',app:'Windows',mac:'⌘→',hint:'Moves cursor to end of current line.',tags:['end','line']},
+{keys:['pageup'],desc:'Scroll up one page',category:'Navigation',app:'Windows',hint:'Scrolls up one screen height.',tags:['page up','scroll','up']},
+{keys:['pagedown'],desc:'Scroll down one page',category:'Navigation',app:'Windows',hint:'Scrolls down one screen height.',tags:['page down','scroll','down']},
+{keys:['tab'],desc:'Indent / Next field',category:'Editing',app:'Windows',hint:'Indents text or moves to next field.',tags:['tab','indent','field']},
+{keys:['shift','tab'],desc:'Outdent / Previous field',category:'Editing',app:'Windows',hint:'Outdents text or moves to previous field.',tags:['shift tab','outdent','previous']},
+{keys:['capslock'],desc:'Toggle Caps Lock',category:'Input',app:'Windows',hint:'Locks keyboard to uppercase.',tags:['caps','uppercase','lock']},
+{keys:['insert'],desc:'Toggle Insert / Overwrite mode',category:'Editing',app:'Windows',hint:'Switches between insert and overwrite modes.',tags:['insert','overwrite','mode']},
+{keys:['numlock'],desc:'Toggle Num Lock',category:'Input',app:'Windows',hint:'Toggles numeric input on numpad.',tags:['numlock','numpad','numeric']},
+{keys:['scrolllock'],desc:'Toggle Scroll Lock',category:'Input',app:'Windows',hint:'Toggles Scroll Lock (app-specific).',tags:['scroll lock']},
+{keys:['shift','f10'],desc:'Open context menu',category:'General',app:'Windows',hint:'Simulates right-click on selected item.',tags:['right click','context menu','menu']},
+{keys:['ctrl','shift','c'],desc:'Copy (developer tools)',category:'Browser',app:'Browser',hint:'Activates element inspector in DevTools.',tags:['inspector','devtools','element']},
+
+// ── GOOGLE DOCS ──
+{keys:['ctrl','alt','h'],desc:'Display revision history',category:'History',app:'Google Docs',mac:'⌘⌥⇧H',hint:'Opens version history sidebar.',tags:['history','revision','version','undo']},
+{keys:['ctrl','alt','shift','h'],desc:'Display revision history (alt)',category:'History',app:'Google Docs',mac:'⌘⌥⇧H',hint:'Shows full revision history panel.',tags:['history','revision','version']},
+{keys:['ctrl','alt','m'],desc:'Insert comment',category:'Collaboration',app:'Google Docs',mac:'⌘⌥M',hint:'Inserts a comment at cursor position.',tags:['comment','note','collaborate']},
+{keys:['ctrl','alt','a'],desc:'Open comments sidebar',category:'Collaboration',app:'Google Docs',mac:'⌘⌥A',hint:'Opens the comments panel.',tags:['comments','sidebar','collaborate']},
+{keys:['ctrl','alt','c'],desc:'Copy formatting',category:'Formatting',app:'Google Docs',mac:'⌘⌥C',hint:'Copies text formatting (paint format).',tags:['copy','format','style','paint']},
+{keys:['ctrl','alt','v'],desc:'Paste formatting',category:'Formatting',app:'Google Docs',mac:'⌘⌥V',hint:'Applies copied formatting to selection.',tags:['paste','format','style']},
+{keys:['ctrl','alt','0'],desc:'Apply Normal text style',category:'Formatting',app:'Google Docs',mac:'⌘⌥0',hint:'Resets paragraph to default Normal style.',tags:['normal','paragraph','style','heading']},
+{keys:['ctrl','alt','1'],desc:'Apply Heading 1',category:'Formatting',app:'Google Docs',mac:'⌘⌥1',hint:'Applies Heading 1 paragraph style.',tags:['heading','h1','title','style']},
+{keys:['ctrl','alt','2'],desc:'Apply Heading 2',category:'Formatting',app:'Google Docs',mac:'⌘⌥2',hint:'Applies Heading 2 paragraph style.',tags:['heading','h2','style']},
+{keys:['ctrl','alt','3'],desc:'Apply Heading 3',category:'Formatting',app:'Google Docs',mac:'⌘⌥3',hint:'Applies Heading 3 paragraph style.',tags:['heading','h3','style']},
+{keys:['ctrl','shift','7'],desc:'Toggle numbered list',category:'Formatting',app:'Google Docs',mac:'⌘⇧7',hint:'Creates or removes numbered list.',tags:['list','numbered','ordered']},
+{keys:['ctrl','shift','8'],desc:'Toggle bulleted list',category:'Formatting',app:'Google Docs',mac:'⌘⇧8',hint:'Creates or removes bulleted list.',tags:['list','bullet','unordered']},
+{keys:['ctrl','shift','9'],desc:'Toggle checklist',category:'Formatting',app:'Google Docs',mac:'⌘⇧9',hint:'Inserts a checklist item.',tags:['checklist','checkbox','todo','list']},
+{keys:['ctrl','shift','l'],desc:'Left align',category:'Formatting',app:'Google Docs',mac:'⌘⇧L',hint:'Left-aligns the selected paragraph.',tags:['align','left','text']},
+{keys:['ctrl','shift','e'],desc:'Center align',category:'Formatting',app:'Google Docs',mac:'⌘⇧E',hint:'Centers the selected paragraph.',tags:['align','center','text']},
+{keys:['ctrl','shift','r'],desc:'Right align',category:'Formatting',app:'Google Docs',mac:'⌘⇧R',hint:'Right-aligns the selected paragraph.',tags:['align','right','text']},
+{keys:['ctrl','shift','j'],desc:'Justify text',category:'Formatting',app:'Google Docs',mac:'⌘⇧J',hint:'Justifies the selected paragraph.',tags:['justify','align','text']},
+{keys:['ctrl','shift','c'],desc:'Word count',category:'Document',app:'Google Docs',mac:'⌘⇧C',hint:'Opens the word count dialog.',tags:['word count','statistics','words']},
+{keys:['ctrl','shift','y'],desc:'Open dictionary',category:'Document',app:'Google Docs',mac:'⌘⇧Y',hint:'Looks up the selected word in the dictionary.',tags:['dictionary','define','word']},
+{keys:['ctrl','shift','x'],desc:'Special characters',category:'Input',app:'Google Docs',mac:'⌘⇧X',hint:'Opens insert special characters dialog.',tags:['special','characters','symbols']},
+{keys:['ctrl','shift','h'],desc:'Find and replace',category:'Search',app:'Google Docs',mac:'⌘⇧H',hint:'Opens the Find and Replace dialog.',tags:['find','replace','search']},
+{keys:['ctrl','alt','g'],desc:'Go to header/footer',category:'Navigation',app:'Google Docs',mac:'⌘⌥G',hint:'Jumps to document header or footer.',tags:['header','footer','navigate']},
+{keys:['ctrl',']'],desc:'Increase indent',category:'Formatting',app:'Google Docs',mac:'⌘]',hint:'Increases paragraph indentation.',tags:['indent','increase','paragraph']},
+{keys:['ctrl','['],desc:'Decrease indent',category:'Formatting',app:'Google Docs',mac:'⌘[',hint:'Decreases paragraph indentation.',tags:['indent','decrease','paragraph']},
+{keys:['ctrl','shift','+'],desc:'Superscript',category:'Formatting',app:'Google Docs',mac:'⌘⇧+',hint:'Formats selected text as superscript.',tags:['superscript','math','exponent']},
+{keys:['ctrl','alt','shift','p'],desc:'Switch to page view',category:'Document',app:'Google Docs',mac:'⌘⌥⇧P',hint:'Toggles between pageless and page view.',tags:['page view','pageless','layout']},
+
+// ── GOOGLE SHEETS ──
+{keys:['ctrl',';'],desc:'Insert current date',category:'Input',app:'Google Sheets',mac:'⌘;',hint:'Inserts today\'s date into the active cell.',tags:['date','today','insert']},
+{keys:['ctrl','shift',';'],desc:'Insert current time',category:'Input',app:'Google Sheets',mac:'⌘⇧;',hint:'Inserts the current time.',tags:['time','now','insert']},
+{keys:['ctrl','shift',':'],desc:'Insert date and time',category:'Input',app:'Google Sheets',mac:'⌘⇧:',hint:'Inserts current date and time.',tags:['datetime','timestamp','insert']},
+{keys:['ctrl','enter'],desc:'Fill selection with entry',category:'Editing',app:'Google Sheets',mac:'⌘Return',hint:'Fills all selected cells with typed content.',tags:['fill','selection','cells']},
+{keys:['ctrl','shift','`'],desc:'Toggle formula bar',category:'View',app:'Google Sheets',hint:'Shows or hides the formula bar.',tags:['formula','bar','toggle']},
+{keys:['ctrl','shift','~'],desc:'Show all formulas',category:'View',app:'Google Sheets',hint:'Toggles between value and formula display.',tags:['formula','show','cells']},
+{keys:['ctrl','shift','*'],desc:'Select current region',category:'Selection',app:'Google Sheets',hint:'Selects the block of cells around active cell.',tags:['select','region','block','cells']},
+{keys:['ctrl','shift','#'],desc:'Apply date format',category:'Formatting',app:'Google Sheets',hint:'Applies date format to selected cells.',tags:['date','format','cells']},
+{keys:['ctrl','shift','$'],desc:'Apply currency format',category:'Formatting',app:'Google Sheets',hint:'Applies currency format to selected cells.',tags:['currency','money','format','dollar']},
+{keys:['ctrl','shift','%'],desc:'Apply percent format',category:'Formatting',app:'Google Sheets',hint:'Applies percentage format to selected cells.',tags:['percent','format','cells']},
+{keys:['ctrl','shift','!'],desc:'Apply number format',category:'Formatting',app:'Google Sheets',hint:'Applies number formatting to selected cells.',tags:['number','format','cells']},
+{keys:['ctrl','alt','shift','f'],desc:'Open filter menu',category:'Data',app:'Google Sheets',mac:'⌘⌥⇧F',hint:'Opens filter menu for active column.',tags:['filter','menu','column','sort']},
+{keys:['ctrl','shift','l'],desc:'Toggle filter',category:'Data',app:'Google Sheets',mac:'⌘⇧L',hint:'Turns the row filter on or off.',tags:['filter','toggle','data']},
+{keys:['ctrl','alt','='],desc:'Insert row or column',category:'Editing',app:'Google Sheets',mac:'⌘⌥=',hint:'Inserts a new row or column.',tags:['insert','row','column','add']},
+{keys:['ctrl','alt','-'],desc:'Delete row or column',category:'Editing',app:'Google Sheets',mac:'⌘⌥-',hint:'Deletes the selected row or column.',tags:['delete','row','column','remove']},
+{keys:['ctrl','alt','shift','m'],desc:'Insert comment',category:'Collaboration',app:'Google Sheets',mac:'⌘⌥⇧M',hint:'Inserts a comment on selected cell.',tags:['comment','note','cell']},
+{keys:['ctrl','alt','shift','s'],desc:'Open Macros menu',category:'Automation',app:'Google Sheets',hint:'Opens macro menu to run or record macros.',tags:['macro','automation','record']},
+];
+
+/* ═══════════════════════════════════════════════════
+   KEYBOARD LAYOUT
+═══════════════════════════════════════════════════ */
+// Each key: { id, label, sub?, cls?, mod?, ghost? }
+// cls = extra CSS classes (widths etc.)
+
+const LAYOUT_MAIN = [
+  // Function row
+  {row:[
+    {id:'esc',label:'Esc',cls:'k-56 mod'},
+    {gap:'fn-gap'},
+    {id:'f1',label:'F1',cls:'k-44'},{id:'f2',label:'F2',cls:'k-44'},{id:'f3',label:'F3',cls:'k-44'},{id:'f4',label:'F4',cls:'k-44'},
+    {gap:'fn-gap'},
+    {id:'f5',label:'F5',cls:'k-44'},{id:'f6',label:'F6',cls:'k-44'},{id:'f7',label:'F7',cls:'k-44'},{id:'f8',label:'F8',cls:'k-44'},
+    {gap:'fn-gap'},
+    {id:'f9',label:'F9',cls:'k-44'},{id:'f10',label:'F10',cls:'k-44'},{id:'f11',label:'F11',cls:'k-44'},{id:'f12',label:'F12',cls:'k-44'},
+  ]},
+  {rowgap:true},
+  // Number row
+  {row:[
+    {id:'`',label:'`',sub:'~',cls:'k-44'},
+    {id:'1',label:'1',sub:'!',cls:'k-44'},{id:'2',label:'2',sub:'@',cls:'k-44'},{id:'3',label:'3',sub:'#',cls:'k-44'},
+    {id:'4',label:'4',sub:'$',cls:'k-44'},{id:'5',label:'5',sub:'%',cls:'k-44'},{id:'6',label:'6',sub:'^',cls:'k-44'},
+    {id:'7',label:'7',sub:'&',cls:'k-44'},{id:'8',label:'8',sub:'*',cls:'k-44'},{id:'9',label:'9',sub:'(',cls:'k-44'},
+    {id:'0',label:'0',sub:')',cls:'k-44'},{id:'-',label:'−',sub:'_',cls:'k-44'},{id:'=',label:'=',sub:'+',cls:'k-44'},
+    {id:'backspace',label:'Backspace',cls:'k-88 mod'},
+  ]},
+  // QWERTY
+  {row:[
+    {id:'tab',label:'Tab',cls:'k-70 mod'},
+    {id:'q',label:'Q'},{id:'w',label:'W'},{id:'e',label:'E'},{id:'r',label:'R'},{id:'t',label:'T'},
+    {id:'y',label:'Y'},{id:'u',label:'U'},{id:'i',label:'I'},{id:'o',label:'O'},{id:'p',label:'P'},
+    {id:'[',label:'[',sub:'{'},{id:']',label:']',sub:'}'},{id:'\\',label:'\\',sub:'|',cls:'k-62'},
+  ]},
+  // Home row
+  {row:[
+    {id:'capslock',label:'Caps Lock',cls:'k-82 mod'},
+    {id:'a',label:'A'},{id:'s',label:'S'},{id:'d',label:'D'},{id:'f',label:'F'},{id:'g',label:'G'},
+    {id:'h',label:'H'},{id:'j',label:'J'},{id:'k',label:'K'},{id:'l',label:'L'},
+    {id:';',label:';',sub:':'},{id:"'",label:"'",sub:'"'},
+    {id:'enter',label:'Enter',cls:'k-96 mod'},
+  ]},
+  // Shift row
+  {row:[
+    {id:'shift',label:'Shift',cls:'k-114 mod'},
+    {id:'z',label:'Z'},{id:'x',label:'X'},{id:'c',label:'C'},{id:'v',label:'V'},{id:'b',label:'B'},
+    {id:'n',label:'N'},{id:'m',label:'M'},{id:',',label:',',sub:'<'},{id:'.',label:'.',sub:'>'},{id:'/',label:'/',sub:'?'},
+    {id:'shift',label:'Shift',cls:'k-136 mod'},
+  ]},
+  // Bottom row
+  {row:[
+    {id:'ctrl',label:'Ctrl',cls:'k-70 mod'},
+    {id:'win',label:'Win',cls:'k-56 mod'},
+    {id:'alt',label:'Alt',cls:'k-56 mod'},
+    {id:'space',label:'',cls:'k-spc'},
+    {id:'alt',label:'Alt',cls:'k-56 mod'},
+    {id:'win',label:'Win',cls:'k-56 mod'},
+    {id:'menu',label:'≡',cls:'k-50 mod'},
+    {id:'ctrl',label:'Ctrl',cls:'k-70 mod'},
+  ]},
+];
+
+const LAYOUT_NAV = [
+  {row:[
+    {id:'printscr',label:'Prt Sc',cls:'k-44'},{id:'scrolllock',label:'Scr Lk',cls:'k-44'},{id:'pause',label:'Pause',cls:'k-44'},
+  ]},
+  {rowgap:true},
+  {row:[
+    {id:'insert',label:'Insert',cls:'k-44'},{id:'home',label:'Home',cls:'k-44'},{id:'pageup',label:'Pg Up',cls:'k-44'},
+  ]},
+  {row:[
+    {id:'del',label:'Delete',cls:'k-44'},{id:'end',label:'End',cls:'k-44'},{id:'pagedown',label:'Pg Dn',cls:'k-44'},
+  ]},
+  {rowgap:true},
+  {row:[
+    {ghost:true,cls:'k-44'},{id:'up',label:'↑',cls:'k-44'},{ghost:true,cls:'k-44'},
+  ]},
+  {row:[
+    {id:'left',label:'←',cls:'k-44'},{id:'down',label:'↓',cls:'k-44'},{id:'right',label:'→',cls:'k-44'},
+  ]},
+];
+
+// Numpad built manually for tall keys
+
+function buildKey(k) {
+  if (k.gap) return `<div class="${k.gap}" style="flex-shrink:0;${k.gap==='fn-gap'?'width:14px':'width:8px'}"></div>`;
+  if (k.ghost) return `<div class="key ghost ${k.cls||'k-38'}"></div>`;
+  const mods = ['ctrl','shift','alt','win','meta','capslock','tab','enter','backspace','esc','space','menu','mod'];
+  const isMod = k.mod || mods.some(m => k.id === m) || (k.cls||'').includes('mod');
+  return `<div class="key ${k.cls||'k-38'}${isMod?' mod':''}" data-id="${k.id}" tabindex="0" role="button" aria-label="${k.label||k.id}">
+    <span class="key-main">${k.label||''}</span>
+    ${k.sub ? `<span class="key-sub">${k.sub}</span>` : ''}
+  </div>`;
+}
+
+function buildLayout(layout, container) {
+  const el = document.getElementById(container);
+  layout.forEach(item => {
+    if (item.rowgap) { el.appendChild(Object.assign(document.createElement('div'),{className:'row-gap'})); return; }
+    const row = document.createElement('div');
+    row.className = 'kb-row';
+    item.row.forEach(k => row.innerHTML += buildKey(k));
+    el.appendChild(row);
+  });
+}
+
+buildLayout(LAYOUT_MAIN, 'kbMain');
+buildLayout(LAYOUT_NAV, 'kbNav');
+
+// Numpad — manual for tall keys
+function buildNumpad() {
+  const el = document.getElementById('kbNum');
+
+  const rows = [
+    [{id:'numlock',label:'Num',cls:'k-44'},{id:'np/',label:'/',cls:'k-44'},{id:'np*',label:'×',cls:'k-44'},{id:'np-',label:'−',cls:'k-44'}],
+    [{id:'np7',label:'7',sub:'Home',cls:'k-44'},{id:'np8',label:'8',sub:'↑',cls:'k-44'},{id:'np9',label:'9',sub:'PgUp',cls:'k-44'}],
+    [{id:'np4',label:'4',sub:'←',cls:'k-44'},{id:'np5',label:'5',cls:'k-44'},{id:'np6',label:'6',sub:'→',cls:'k-44'}],
+    [{id:'np1',label:'1',sub:'End',cls:'k-44'},{id:'np2',label:'2',sub:'↓',cls:'k-44'},{id:'np3',label:'3',sub:'PgDn',cls:'k-44'}],
+    [{id:'np0',label:'0',sub:'Ins',cls:'k-96'},{id:'np.',label:'.',sub:'Del',cls:'k-44'}],
+  ];
+
+  // Row 0
+  const r0 = document.createElement('div'); r0.className = 'kb-row';
+  rows[0].forEach(k => r0.innerHTML += buildKey(k));
+  el.appendChild(r0);
+
+  // Rows 1+2 with tall + key (spans rows 1 and 2)
+  const rWrap12 = document.createElement('div');
+  rWrap12.style.cssText = 'display:flex;flex-direction:column;gap:4px;';
+  const r1 = document.createElement('div'); r1.className = 'kb-row';
+  rows[1].forEach(k => r1.innerHTML += buildKey(k));
+  const r2 = document.createElement('div'); r2.className = 'kb-row';
+  rows[2].forEach(k => r2.innerHTML += buildKey(k));
+  rWrap12.appendChild(r1); rWrap12.appendChild(r2);
+
+  const pair12 = document.createElement('div');
+  pair12.style.cssText = 'display:flex;gap:4px;align-items:flex-start;';
+  pair12.appendChild(rWrap12);
+  const kPlus = document.createElement('div');
+  kPlus.innerHTML = `<div class="key k-44 tall" data-id="np+" tabindex="0" role="button" aria-label="+"><span class="key-main">+</span></div>`;
+  pair12.appendChild(kPlus.firstElementChild);
+  el.appendChild(pair12);
+
+  // Rows 3+4 with tall Enter
+  const rWrap34 = document.createElement('div');
+  rWrap34.style.cssText = 'display:flex;flex-direction:column;gap:4px;';
+  const r3 = document.createElement('div'); r3.className = 'kb-row';
+  rows[3].forEach(k => r3.innerHTML += buildKey(k));
+  const r4 = document.createElement('div'); r4.className = 'kb-row';
+  rows[4].forEach(k => r4.innerHTML += buildKey(k));
+  rWrap34.appendChild(r3); rWrap34.appendChild(r4);
+
+  const pair34 = document.createElement('div');
+  pair34.style.cssText = 'display:flex;gap:4px;align-items:flex-start;';
+  pair34.appendChild(rWrap34);
+  const kEnt = document.createElement('div');
+  kEnt.innerHTML = `<div class="key k-44 tall" data-id="npenter" tabindex="0" role="button" aria-label="Enter"><span class="key-main">↵</span></div>`;
+  pair34.appendChild(kEnt.firstElementChild);
+  el.appendChild(pair34);
+}
+buildNumpad();
+
+/* ═══════════════════════════════════════════════════
+   AUDIO ENGINE
+═══════════════════════════════════════════════════ */
+let actx;
+function getACtx() { if(!actx) actx = new (window.AudioContext||window.webkitAudioContext)(); return actx; }
+
+function playKey(isOn) {
+  try {
+    const ctx = getACtx();
+    const buf = ctx.createBuffer(1, ctx.sampleRate * 0.08, ctx.sampleRate);
+    const data = buf.getChannelData(0);
+    for(let i=0;i<data.length;i++) {
+      const t = i / ctx.sampleRate;
+      const env = Math.exp(-t * 60);
+      // mix of two tones + subtle noise for mechanical feel
+      data[i] = env * (
+        0.4 * Math.sin(2*Math.PI*(isOn?480:320)*t) +
+        0.2 * Math.sin(2*Math.PI*(isOn?960:640)*t) +
+        0.06 * (Math.random()*2-1)
+      );
+    }
+    const src = ctx.createBufferSource();
+    src.buffer = buf;
+    const gain = ctx.createGain();
+    gain.gain.value = 0.12;
+    src.connect(gain); gain.connect(ctx.destination);
+    src.start();
+  } catch(e) {}
+}
+
+/* ═══════════════════════════════════════════════════
+   STATE
+═══════════════════════════════════════════════════ */
+const activeKeys = new Set();
+const history = [];
+
+function norm(id) { return (id||'').toLowerCase().trim(); }
+
+/* ═══════════════════════════════════════════════════
+   KEY EVENTS
+═══════════════════════════════════════════════════ */
+function toggleKey(el) {
+  const id = norm(el.dataset.id);
+  if(!id) return;
+  const wasOn = activeKeys.has(id);
+  if(wasOn) { activeKeys.delete(id); el.classList.remove('active'); }
+  else { activeKeys.add(id); el.classList.add('active'); }
+  el.classList.add('anim-press');
+  setTimeout(()=>el.classList.remove('anim-press'), 140);
+  playKey(!wasOn);
+  refresh();
+}
+
+// Physical keyboard
+const KEY_MAP = {
+  'Control':'ctrl','Shift':'shift','Alt':'alt','Meta':'win',
+  'Escape':'esc','Tab':'tab','CapsLock':'capslock','Enter':'enter','Backspace':'backspace',
+  ' ':'space','Delete':'del','Insert':'insert','Home':'home','End':'end',
+  'PageUp':'pageup','PageDown':'pagedown','PrintScreen':'printscr','ScrollLock':'scrolllock','Pause':'pause',
+  'F1':'f1','F2':'f2','F3':'f3','F4':'f4','F5':'f5','F6':'f6',
+  'F7':'f7','F8':'f8','F9':'f9','F10':'f10','F11':'f11','F12':'f12',
+  'ArrowUp':'up','ArrowDown':'down','ArrowLeft':'left','ArrowRight':'right',
+};
+
+document.addEventListener('keydown', e => {
+  const id = KEY_MAP[e.key] || (e.key.length===1 ? e.key.toLowerCase() : null);
+  if(!id) return;
+  e.preventDefault();
+  if(activeKeys.has(id)) return; // already on
+  activeKeys.add(id);
+  document.querySelectorAll(`.key[data-id="${id}"]`).forEach(el=>{
+    el.classList.add('active');
+    el.classList.add('anim-press');
+    setTimeout(()=>el.classList.remove('anim-press'),140);
+  });
+  playKey(true);
+  refresh();
+});
+
+document.addEventListener('keyup', ()=>{
+  // physical keys are also sticky — release doesn't toggle off
+  // (matches requested behavior: sticky until clicked again)
+});
+
+document.querySelectorAll('.key').forEach(el=>{
+  el.addEventListener('click', ()=>toggleKey(el));
+  el.addEventListener('keydown', e=>{ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); toggleKey(el); }});
+});
+
+/* ═══════════════════════════════════════════════════
+   SHORTCUT MATCHING
+═══════════════════════════════════════════════════ */
+const MOD_ORDER = ['ctrl','shift','alt','win','meta'];
+
+function sortKeys(keys) {
+  return [...keys].sort((a,b)=>{
+    const ai = MOD_ORDER.indexOf(a), bi = MOD_ORDER.indexOf(b);
+    if(ai!==-1&&bi!==-1) return ai-bi;
+    if(ai!==-1) return -1; if(bi!==-1) return 1;
+    return a.localeCompare(b);
+  });
+}
+
+function formatCombo(keys) {
+  const LABELS = {
+    ctrl:'Ctrl',shift:'Shift',alt:'Alt',win:'Win',meta:'Meta',
+    enter:'Enter',backspace:'Backspace',tab:'Tab',esc:'Esc',del:'Delete',
+    insert:'Insert',home:'Home',end:'End',pageup:'Page Up',pagedown:'Page Down',
+    up:'↑',down:'↓',left:'←',right:'→',space:'Space',capslock:'Caps Lock',
+    numlock:'Num Lock',scrolllock:'Scroll Lock',printscr:'Print Screen',pause:'Pause',
+    f1:'F1',f2:'F2',f3:'F3',f4:'F4',f5:'F5',f6:'F6',
+    f7:'F7',f8:'F8',f9:'F9',f10:'F10',f11:'F11',f12:'F12',
+  };
+  return sortKeys(keys).map(k => {
+    const label = LABELS[k] || k.toUpperCase();
+    return `<span class="combo-key">${label}</span>`;
+  }).join('<span class="combo-sep">+</span>');
+}
+
+function exactMatches(keySet) {
+  return DB.filter(sc => {
+    const sk = new Set(sc.keys.map(norm));
+    if(sk.size !== keySet.size) return false;
+    for(const k of sk) if(!keySet.has(k)) return false;
+    return true;
+  });
+}
+
+function partialMatches(keySet) {
+  if(keySet.size===0) return [];
+  const active = [...keySet];
+  return DB.filter(sc => {
+    const sk = sc.keys.map(norm);
+    return sk.length > active.length && active.every(a=>sk.includes(a));
+  }).slice(0, 8);
+}
+
+function updateHints(keySet) {
+  const hintIds = new Set();
+  if(keySet.size > 0) {
+    const active = [...keySet];
+    DB.forEach(sc => {
+      const sk = sc.keys.map(norm);
+      if(sk.length > active.length && active.every(a=>sk.includes(a))) {
+        sk.forEach(k=>{ if(!active.includes(k)) hintIds.add(k); });
+      }
+    });
+  }
+  document.querySelectorAll('.key').forEach(el=>{
+    const id = norm(el.dataset.id||'');
+    if(hintIds.has(id) && !activeKeys.has(id)) el.classList.add('hint');
+    else el.classList.remove('hint');
+  });
+}
+
+function getComboText(keys) {
+  return sortKeys(keys).map(k=>{
+    const L={ctrl:'Ctrl',shift:'Shift',alt:'Alt',win:'Win',enter:'Enter',backspace:'Backspace',tab:'Tab',esc:'Esc',del:'Delete',insert:'Insert',home:'Home',end:'End',pageup:'PgUp',pagedown:'PgDn',up:'↑',down:'↓',left:'←',right:'→',space:'Space',capslock:'CapsLk',f1:'F1',f2:'F2',f3:'F3',f4:'F4',f5:'F5',f6:'F6',f7:'F7',f8:'F8',f9:'F9',f10:'F10',f11:'F11',f12:'F12'};
+    return L[k]||k.toUpperCase();
+  }).join(' + ');
+}
+
+function appTag(app) {
+  if(!app||app==='Windows') return '<span class="mc-tag">Windows</span>';
+  return `<span class="mc-tag">${app}</span>`;
+}
+
+function refresh() {
+  const keySet = new Set([...activeKeys].map(norm));
+  const comboEl = document.getElementById('comboDisplay');
+  const matchEl = document.getElementById('matchArea');
+
+  if(keySet.size===0) {
+    comboEl.innerHTML = '<span class="empty-state">Press or click keys to explore…</span>';
+    matchEl.innerHTML = '';
+    updateHints(keySet);
+    return;
+  }
+
+  comboEl.innerHTML = formatCombo([...keySet]);
+  updateHints(keySet);
+
+  const exact = exactMatches(keySet);
+  const partial = partialMatches(keySet);
+
+  let html = '';
+
+  if(exact.length > 0) {
+    exact.forEach(m => {
+      html += `<div class="match-card">
+        <div class="mc-header">${appTag(m.app)}<span class="mc-category">${m.category||''}</span></div>
+        <div class="mc-desc">${m.desc}</div>
+        <div class="mc-meta">
+          ${m.mac?`<span class="mc-mac">macOS: ${m.mac} &nbsp;·&nbsp; </span>`:''}
+          ${m.hint?`<span class="mc-note">${m.hint}</span>`:''}
+        </div>
+      </div>`;
+    });
+
+    // Add to history
+    const comboText = getComboText([...keySet]);
+    const desc = exact[0].desc + (exact[0].app&&exact[0].app!=='Windows'?` (${exact[0].app})`:'');
+    addHistory(comboText, desc);
+  }
+
+  if(partial.length > 0 && exact.length === 0) {
+    html += `<div class="partial-area">
+      <div class="partial-label">Continue with…</div>
+      <div class="partial-chips">`;
+    const nextKeys = new Set();
+    partial.forEach(sc=>{
+      sc.keys.map(norm).forEach(k=>{ if(!keySet.has(k)) nextKeys.add(k); });
+    });
+    [...nextKeys].slice(0,10).forEach(k=>{
+      const label = getComboText([k]);
+      html += `<span class="chip" data-addkey="${k}"><span class="chip-key">+ ${label}</span></span>`;
+    });
+    html += `</div>`;
+
+    // Show partial match list
+    html += `<div style="margin-top:8px;display:flex;flex-direction:column;gap:5px;">`;
+    partial.slice(0,5).forEach(m=>{
+      html += `<div class="match-card" style="opacity:0.7;">
+        <div class="mc-header">${appTag(m.app)}<span class="mc-category">${m.category||''}</span></div>
+        <div class="mc-desc" style="font-size:0.73rem">${getComboText(m.keys)} → ${m.desc}</div>
+      </div>`;
+    });
+    html += `</div></div>`;
+  }
+
+  if(exact.length===0 && partial.length===0 && keySet.size>0) {
+    html = `<div class="empty-state" style="margin-top:8px">No shortcut found for this combination.</div>`;
+  }
+
+  matchEl.innerHTML = html;
+
+  // chip click handlers
+  matchEl.querySelectorAll('.chip[data-addkey]').forEach(chip=>{
+    chip.addEventListener('click',()=>{
+      const k = chip.dataset.addkey;
+      activeKeys.add(k);
+      document.querySelectorAll(`.key[data-id="${k}"]`).forEach(el=>el.classList.add('active'));
+      playKey(true);
+      refresh();
+    });
+  });
+}
+
+/* ═══════════════════════════════════════════════════
+   HISTORY
+═══════════════════════════════════════════════════ */
+function addHistory(combo, desc) {
+  // avoid duplicate last entry
+  if(history.length>0 && history[0].combo===combo) return;
+  history.unshift({combo, desc});
+  if(history.length>12) history.pop();
+  renderHistory();
+}
+
+function renderHistory() {
+  const el = document.getElementById('historyList');
+  if(history.length===0){ el.innerHTML='<div class="empty-state">No combos yet.</div>'; return; }
+  el.innerHTML = history.map(h=>`
+    <div class="hist-item" data-combo="${h.combo}">
+      <div class="hist-combo">${h.combo}</div>
+      <div class="hist-desc">${h.desc}</div>
+    </div>
+  `).join('');
+  el.querySelectorAll('.hist-item').forEach(item=>{
+    item.addEventListener('click',()=>{
+      // re-activate that combo
+      const keys = item.dataset.combo.split(' + ').map(k=>k.toLowerCase()
+        .replace('ctrl','ctrl').replace('shift','shift').replace('alt','alt').replace('win','win')
+        .replace('esc','esc').replace('enter','enter').replace('backspace','backspace')
+        .replace('delete','del').replace('page up','pageup').replace('page dn','pagedown')
+        .replace('↑','up').replace('↓','down').replace('←','left').replace('→','right')
+        .replace('space','space').replace('caps lk','capslock')
+      );
+      activeKeys.clear();
+      document.querySelectorAll('.key.active').forEach(el=>el.classList.remove('active'));
+      keys.forEach(k=>{
+        activeKeys.add(k);
+        document.querySelectorAll(`.key[data-id="${k}"]`).forEach(el=>el.classList.add('active'));
+      });
+      refresh();
+    });
+  });
+}
+
+/* ═══════════════════════════════════════════════════
+   TOOLTIP
+═══════════════════════════════════════════════════ */
+const tooltip = document.getElementById('tooltip');
+const ttCombo = document.getElementById('tt-combo');
+const ttBody = document.getElementById('tt-body');
+let ttTimer;
+
+document.querySelectorAll('.key').forEach(el=>{
+  el.addEventListener('mouseenter', e=>{
+    const id = norm(el.dataset.id||'');
+    if(!id) return;
+    const matches = DB.filter(sc=>sc.keys.length===1 && norm(sc.keys[0])===id);
+    if(matches.length===0) return;
+    clearTimeout(ttTimer);
+    ttTimer = setTimeout(()=>{
+      const k = getComboText([id]);
+      ttCombo.textContent = k;
+      ttBody.innerHTML = matches.map(m=>`<div>${m.desc}${m.app&&m.app!=='Windows'?` <em>(${m.app})</em>`:''}</div>`).join('');
+      tooltip.classList.add('show');
+    }, 420);
+  });
+  el.addEventListener('mousemove', e=>{
+    tooltip.style.left = (e.clientX+16)+'px';
+    tooltip.style.top = (e.clientY-36)+'px';
+  });
+  el.addEventListener('mouseleave', ()=>{
+    clearTimeout(ttTimer);
+    tooltip.classList.remove('show');
+  });
+});
+
+/* ═══════════════════════════════════════════════════
+   SEARCH
+═══════════════════════════════════════════════════ */
+const searchInput = document.getElementById('searchInput');
+const searchResults = document.getElementById('searchResults');
+
+function fuzzySearch(q) {
+  q = q.toLowerCase();
+  return DB.filter(sc=>{
+    const hay = [sc.desc, sc.category, sc.app, ...(sc.tags||[]), sc.hint||'', sc.keys.join(' ')].join(' ').toLowerCase();
+    return q.split(' ').every(word => hay.includes(word));
+  }).slice(0,14);
+}
+
+searchInput.addEventListener('input', ()=>{
+  const q = searchInput.value.trim();
+  if(q.length < 2){ searchResults.classList.remove('open'); return; }
+  const hits = fuzzySearch(q);
+  if(!hits.length){ searchResults.classList.remove('open'); return; }
+  searchResults.innerHTML = hits.map(h=>`
+    <div class="sr-item" data-keys="${h.keys.join(',')}">
+      <div class="sr-combo">${h.keys.map(k=>k.toUpperCase()).join(' + ')}</div>
+      <div class="sr-desc"><span class="sr-tag">${h.app}</span>${h.desc}</div>
+    </div>
+  `).join('');
+  searchResults.classList.add('open');
+});
+
+searchResults.addEventListener('click', e=>{
+  const item = e.target.closest('.sr-item');
+  if(!item) return;
+  const keys = item.dataset.keys.split(',');
+  activeKeys.clear();
+  document.querySelectorAll('.key.active').forEach(el=>el.classList.remove('active'));
+  keys.forEach(k=>{
+    const id = norm(k);
+    activeKeys.add(id);
+    document.querySelectorAll(`.key[data-id="${id}"]`).forEach(el=>el.classList.add('active'));
+  });
+  playKey(true);
+  refresh();
+  searchInput.value='';
+  searchResults.classList.remove('open');
+});
+
+document.addEventListener('click', e=>{ if(!e.target.closest('.search-zone')) searchResults.classList.remove('open'); });
+document.addEventListener('keydown', e=>{ if(e.key==='Escape') searchResults.classList.remove('open'); });
+
+/* ═══════════════════════════════════════════════════
+   THEME BUTTON
+═══════════════════════════════════════════════════ */
+document.getElementById('flowerBtn').addEventListener('click', ()=>{
+  themeIdx = (themeIdx+1) % THEMES.length;
+  applyTheme(themeIdx, true);
+});
+
+/* ═══════════════════════════════════════════════════
+   INIT
+═══════════════════════════════════════════════════ */
+applyTheme(0, false);
+refresh();
+</script>
+</body>
+</html>
+HTMLEOF
+echo "Done"
